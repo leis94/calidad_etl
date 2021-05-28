@@ -1,45 +1,34 @@
-from numpy.lib.function_base import append
 import pandas as pd
 import numpy as np
-import sqlalchemy as sql
+from config import Conexion
 
-database_type = 'mysql'
-user = 'root'
-password = 'admin123#'
-host = 'localhost:3306'
-database = 'calidad_etl'
-
-conn_string = '{}://{}:{}@{}/{}?charset=utf8'.format(
-                database_type, user, password, host, database,)
-
-sql_conn = sql.create_engine(conn_string)
-
-df_excel = pd.read_excel(r'C:\Users\Cristian Silva\Documents\Repositorios\etl\data\CLIC RESUELTOS 26-04-2021.xlsx')
-
-#Convertir los formatos object en formatos strings
-df_excel = df_excel.convert_dtypes()
+conn = Conexion()
 
 
-columns_names_sql = """
-SHOW columns FROM calidad_etl.clic_resueltos;
-"""
-df_sql= pd.read_sql(columns_names_sql, sql_conn)
+def run():
 
-columns_clic = df_sql.iloc[0:,[0]]
+    df_excel = pd.read_excel(
+        r'C:\Users\Cristian Silva\Documents\Repositorios\etl\data\CLIC RESUELTOS 26-04-2021.xlsx')
 
-columns_clic = columns_clic['Field'].tolist()
+    # Convertir los formatos object en formatos strings
+    df_excel = df_excel.convert_dtypes()
 
-columnas = df_excel.columns
+    columns_names_sql = """
+    SHOW columns FROM calidad_etl.clic_resueltos;
+    """
+    df_sql = pd.read_sql(columns_names_sql, conn.conecction_db())
+
+    columns_clic = df_sql.iloc[0:, [0]]
+
+    columns_clic = columns_clic['Field'].tolist()
+
+    # Cambio las columnas del dataframe que están con espacios por _ las cuales son las de la BD.
+    df_excel.columns = df_excel.columns[:0].tolist() + columns_clic
+
+    # print(df_excel)
+    df_excel.to_sql('clic_resueltos', con=conn.conecction_db(),
+                    if_exists='append', index=False)
 
 
-#Cambio las columnas del dataframe que están con espacios por _ las cuales son las de la BD.
-df_excel.columns = df_excel.columns[:0].tolist() + columns_clic
-
-#print(df_excel)
-df_excel.to_sql('clic_resueltos', con=sql_conn, if_exists='append', index=False)
-
-
-
-
-
-
+if __name__ == '__main__':
+    run()
