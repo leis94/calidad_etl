@@ -1,5 +1,5 @@
 import sqlalchemy as sql
-
+import pandas as pd
 
 class Conexion():
 
@@ -25,4 +25,34 @@ class Conexion():
 
         conn.execute(f"TRUNCATE TABLE {table}")
 
-        return (f"{table}Truncada")
+        return (f"{table} Truncada")
+
+    
+    def select_table_query(self, column, table):
+
+        conn = self.conecction_db()
+
+        result = f"SELECT {column} FROM {table};"
+
+        return result
+
+
+    def select_columns_table(self, table):
+
+        table = table.upper()
+        
+        columns_names_sql = f"SHOW columns FROM calidad_etl.{table};"
+
+        df_columnas = pd.read_sql(columns_names_sql, self.conecction_db())
+
+        df_columnas = df_columnas.iloc[1:,[0]]
+
+        df_columnas = df_columnas['Field'].values.tolist()
+
+        #print(df_columnas)
+
+        # df_columnas = df_columnas.tolist()
+
+        # df_columnas = df_columnas.iloc[1:[0]].tolist()
+
+        return df_columnas

@@ -49,8 +49,6 @@ def run():
         print(f'Inserto en la tabla: {table}')
 
 
-    print("fin del programa")
-
 def comparar_dimensiones_vs_valores_nuevos(dfs):
 
     dict_dfs = {}
@@ -93,3 +91,4 @@ def comparar_dimensiones_vs_valores_nuevos(dfs):
 
 if __name__ == '__main__':
     run()
+    print("fin del programa")
