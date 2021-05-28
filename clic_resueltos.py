@@ -25,6 +25,13 @@ def run():
     # Cambio las columnas del dataframe que están con espacios por _ las cuales son las de la BD.
     df_excel.columns = df_excel.columns[:0].tolist() + columns_clic
 
+    clic_resueltos_sql = """SELECT * FROM calidad_etl.clic_resueltos LIMIT 1;"""
+
+    df_sql = pd.read_sql(clic_resueltos_sql, conn.conecction_db())
+
+    if not df_sql.empty:
+        conn.truncate_table('clic_resueltos')
+
     # print(df_excel)
     df_excel.to_sql('clic_resueltos', con=conn.conecction_db(),
                     if_exists='append', index=False)

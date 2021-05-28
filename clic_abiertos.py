@@ -31,6 +31,13 @@ def run():
     df_excel_abiertos.columns = df_excel_abiertos.columns[:0].tolist(
     ) + columns_bd
 
+    clic_abiertos_sql = """SELECT * FROM calidad_etl.clic_abiertos LIMIT 1;"""
+
+    df_sql = pd.read_sql(clic_abiertos_sql, conn.conecction_db())
+
+    if not df_sql.empty:
+        conn.truncate_table('clic_abiertos')
+
     df_excel_abiertos.to_sql(
         'clic_abiertos', con=conn.conecction_db(), if_exists='append', index=False)
 
