@@ -1,6 +1,7 @@
 import sqlalchemy as sql
 import pandas as pd
 
+
 class Conexion():
 
     def __init__(self):
@@ -27,7 +28,6 @@ class Conexion():
 
         return (f"{table} Truncada")
 
-    
     def select_table_query(self, column, table):
 
         conn = self.conecction_db()
@@ -36,23 +36,32 @@ class Conexion():
 
         return result
 
+    def select_table_date_query(self, column, table, date):
+
+        conn = self.conecction_db()
+
+        result = f"SELECT {column} FROM {table} WHERE INSERTAR_DT = '{date}' LIMIT 1;"
+
+        return result
 
     def select_columns_table(self, table):
 
         table = table.upper()
-        
+
         columns_names_sql = f"SHOW columns FROM calidad_etl.{table};"
 
         df_columnas = pd.read_sql(columns_names_sql, self.conecction_db())
 
-        df_columnas = df_columnas.iloc[1:,[0]]
+        df_columnas = df_columnas.iloc[1:, [0]]
 
         df_columnas = df_columnas['Field'].values.tolist()
 
-        #print(df_columnas)
-
-        # df_columnas = df_columnas.tolist()
-
-        # df_columnas = df_columnas.iloc[1:[0]].tolist()
-
         return df_columnas
+
+    def delete_data(self, table, date):
+
+        conn = self.conecction_db()
+
+        conn.execute(f"DELETE FROM {table} WHERE INSERTAR_DT = '{date}'")
+
+        return (f"La fecha {date} fue borrada de la tabla {table}")
