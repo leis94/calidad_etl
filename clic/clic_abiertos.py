@@ -1,12 +1,12 @@
 from numpy.lib.function_base import append
 import pandas as pd
 import numpy as np
-from config import Conexion
+from config.config import Conexion
 
 conn = Conexion()
 
 
-def run():
+def clic_abiertos():
 
     df_excel_telecomunicaciones = pd.read_excel(
         r'C:\Users\Cristian Silva\Documents\Repositorios\etl\data\telecomunicaciones.xlsx')
@@ -42,5 +42,5 @@ def run():
         'clic_abiertos', con=conn.conecction_db(), if_exists='append', index=False)
 
 
-if __name__ == '__main__':
-    run()
+# if __name__ == '__main__':
+#     run()

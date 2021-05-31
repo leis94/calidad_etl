@@ -1,11 +1,11 @@
 import pandas as pd
 import numpy as np
-from config import Conexion
+from config.config import Conexion
 
 conn = Conexion()
 
 
-def run():
+def clic_resueltos():
 
     df_excel = pd.read_excel(
         r'C:\Users\Cristian Silva\Documents\Repositorios\etl\data\CLIC RESUELTOS 26-04-2021.xlsx')
@@ -37,5 +37,5 @@ def run():
                     if_exists='append', index=False)
 
 
-if __name__ == '__main__':
-    run()
+# if __name__ == '__main__':
+#     run()

@@ -10,7 +10,6 @@ class Conexion():
         self.password = 'admin123#'
         self.host = 'localhost:3306'
         self.database = 'calidad_etl'
-        self.name = 'Andres'
 
     def conecction_db(self):
 
