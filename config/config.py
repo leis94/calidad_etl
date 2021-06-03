@@ -43,6 +43,14 @@ class Conexion():
 
         return result
 
+    def select_table_limit_query(self, table):
+
+        conn = self.conecction_db()
+
+        result = f"SELECT * FROM {table} LIMIT 1;"
+
+        return result
+
     def select_columns_table(self, table):
 
         table = table.upper()
@@ -51,7 +59,7 @@ class Conexion():
 
         df_columnas = pd.read_sql(columns_names_sql, self.conecction_db())
 
-        df_columnas = df_columnas.iloc[1:, [0]]
+        #df_columnas = df_columnas.iloc[1:, [0]]
 
         df_columnas = df_columnas['Field'].values.tolist()
 
