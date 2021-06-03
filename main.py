@@ -5,6 +5,7 @@ from clic.fact_clic import fact_clic_abiertos, fact_clic_resueltos
 from avaya.llamadas import av_llamadas
 from avaya.abandonos import av_abandonos
 from avaya.poblar_dims_avaya import dims_avaya_llamadas, dims_avaya_abandonos
+from avaya.fact_avaya import fact_av_llamadas, fact_av_abandonos
 
 
 if __name__ == '__main__':
@@ -19,4 +20,6 @@ if __name__ == '__main__':
     av_abandonos()
     dims_avaya_llamadas()
     dims_avaya_abandonos()
+    fact_av_llamadas()
+    fact_av_abandonos()
     print("Finalizó")
