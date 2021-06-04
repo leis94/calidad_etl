@@ -1,7 +1,5 @@
 import pandas as pd
-import numpy as np
-from config import Conexion
-import pdb
+from config.config import Conexion
 
 conn = Conexion()
 
@@ -29,12 +27,6 @@ def dimensiones_sm_cerrado():
     dim_servicio = dim_servicio.fillna('ND')
     dim_usuario_sm = dim_usuario_sm.fillna('ND')
 
-    # dim_categoria.dropna(axis=0, inplace=True)
-    # dim_cliente.dropna(axis=0, inplace=True)
-    # dim_grupo_sm.dropna(axis=0, inplace=True)
-    # dim_servicio.dropna(axis=0, inplace=True)
-    # dim_usuario_sm.dropna(axis=0, inplace=True)
-
     dict_dfs = {
                 "dim_cliente": ["NOMBRE_CLIENTE", dim_cliente],
                 "dim_grupo_sm": ["GRUPO_ASIGNADO", dim_grupo_sm],
@@ -61,7 +53,6 @@ def dimensiones_sm_backlog():
     sm_backlog_sql = "SELECT * FROM calidad_process.sm_backlog;"
     df_sql = pd.read_sql(sm_backlog_sql, conn.conecction_db())
     df_sql = df_sql.convert_dtypes()
-    # pdb.set_trace()
     # Busco los valores unicos (no repeitodos) de las columnas que serán dimensiones, como esto devuelve un np.array lo convierto en un dataframe de nuevo
     dim_categoria_backlog = pd.DataFrame(
         (df_sql.loc[:, "PRIORITY"].unique()), columns=["PRIORITY"])
@@ -81,11 +72,6 @@ def dimensiones_sm_backlog():
     dim_servicio_backlog = dim_servicio_backlog.fillna('ND')
     dim_usuarios_sm_backlog = dim_usuarios_sm_backlog.fillna('ND')
     
-    # dim_categoria_backlog.dropna(axis=0, inplace=True)
-    # dim_cliente_backlog.dropna(axis=0, inplace=True)
-    # dim_grupo_sm_backlog.dropna(axis=0, inplace=True)
-    # dim_servicio_backlog.dropna(axis=0, inplace=True)
-    # dim_usuarios_sm_backlog.dropna(axis=0, inplace=True)
 
     dict_dfs = {
                 "dim_cliente_backlog": ["CUSTOMER_ID","DEPT_ID","DEPT", dim_cliente_backlog],
@@ -291,8 +277,6 @@ def comparar_dimensiones_vs_valores_nuevos_smb(dfs):
             if not df_merge_left_t.empty:
                 dict_dfs[f'{table}'] = df_merge_left_t
             
-        pdb.set_trace()
-
     return dict_dfs
 
 if __name__ == '__main__':

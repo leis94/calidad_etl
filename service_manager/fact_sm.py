@@ -1,10 +1,9 @@
 import pandas as pd
 from pandas.core.frame import DataFrame
-from config import Conexion
-from dimensiones_sm_c import DimensionesSMC
-import pdb
-from calculo_columna import  trim_all_columns, cumplimiento, SLA_BACK_CALC, operacion, prioridad
-from calculo_columna import tecnologia, id_compania, FECHA_INFGESO_ESTADO_CORTA, EXCLUYENTE_PROACTIVO
+from config.config import Conexion
+from .dimensiones_sm_c import DimensionesSMC
+from .calculo_columna import  trim_all_columns, cumplimiento, SLA_BACK_CALC, operacion, prioridad
+from .calculo_columna import tecnologia, id_compania, FECHA_INFGESO_ESTADO_CORTA, EXCLUYENTE_PROACTIVO
  
 
 conn = Conexion()
@@ -33,8 +32,6 @@ def fact_sm_backlog():
         dim_sm_backlog.dim_grupo_sm_backlog, on=["OPEN_GROUP","ASSIGNED_GROUP"]).merge(
         dim_sm_backlog.dim_servicio_backlog, on="ServicesManager").merge(
         dim_sm_backlog.dim_usuarios_sm_backlog, on="OPENED_BY").convert_dtypes()
-    
-    # pdb.set_trace()
     
     # Elimino las columnas que sobran del DF dejando solo sus IDs.
     df_fact_sm_backlog = df_fact_sm_backlog.drop(
@@ -69,10 +66,8 @@ def fact_sm_backlog():
     #cumplimiento
     df_sm_backlog = cumplimiento(df_fact_sm_backlog,dim_sm_backlog.dim_categoria_backlog)
     #SLA_BACK_CALC
-    # pdb.set_trace()
     df_sm_backlog = SLA_BACK_CALC(df_fact_sm_backlog,dim_sm_backlog.dim_categoria_backlog)
     #operacion
-    # pdb.set_trace()
     df_sm_backlog = operacion(df_fact_sm_backlog,dim_sm_backlog.dim_cliente_backlog)
     
     sql_fact = pd.read_sql(conn.select_table_date_query(
@@ -80,8 +75,6 @@ def fact_sm_backlog():
 
     if not sql_fact.empty:
         conn.delete_data(table='fact_sm_backlog', date=today)
-
-    pdb.set_trace()
 
     df_fact_sm_backlog.to_sql('fact_sm_backlog', con=conn.conecction_db(),if_exists='append', index=False)
 
@@ -98,8 +91,6 @@ def fact_sm_cerrado():
     df_sm_backlog = pd.concat([df_sm_cerrado,df_sm_cerrado_new],axis=1)
 
     df_sm_cerrado = df_sm_cerrado.fillna('ND')
-
-    # pdb.set_trace()
     
     # Hago el merge de los dataframes vs las dimensiones por sus campos que comparten.
     df_fact_sm_cerrado = pd.merge(df_sm_cerrado, 
@@ -108,8 +99,6 @@ def fact_sm_cerrado():
         dim_sm_cerrado.dim_grupo_sm, on="GRUPO_ASIGNADO").merge(
         dim_sm_cerrado.dim_servicio, on="SERVICIO").merge(
         dim_sm_cerrado.dim_usuario_sm, on=["USUARIO_INSERTADO","USUARIO_ASIGNADO","USUARIO_SOLUCION","USUARIO_CERRADO"]).convert_dtypes()
-
-    # pdb.set_trace()
     # Elimino las columnas que sobran del DF dejando solo sus IDs.
     df_fact_sm_cerrado = df_fact_sm_cerrado.drop(
         ['NIT', 'ID_CLIENTE_ONYX', 'NOMBRE_CLIENTE',
@@ -139,20 +128,14 @@ def fact_sm_cerrado():
         df_fact_sm_cerrado['INSERTAR_DT'])
 
     #Tecnologia
-    #pdb.set_trace()
     df_fact_sm_cerrado = tecnologia(df_fact_sm_cerrado)
     #Id_compania
-    pdb.set_trace()
     df_fact_sm_cerrado = id_compania(df_fact_sm_cerrado,dim_sm_cerrado.dim_cliente)
     #FECHA_INGRESO_ESTADO_CORTA
-    pdb.set_trace()
     df_fact_sm_cerrado = FECHA_INFGESO_ESTADO_CORTA(df_fact_sm_cerrado)
     #EXCLUYENTE_PROACTIVO
-    pdb.set_trace()
     df_fact_sm_cerrado = EXCLUYENTE_PROACTIVO(df_fact_sm_cerrado,dim_sm_cerrado.dim_usuario_sm)
 
-    pdb.set_trace()
-    
     df_sql = pd.read_sql(conn.select_table_date_query(
         column='*', table='fact_sm_cerrado', date=today), conn.conecction_db())
 
@@ -163,7 +146,8 @@ def fact_sm_cerrado():
                                  if_exists='append', index=False)
     
 if __name__ == '__main__':
-    #prioridad()
+
+    prioridad()
     fact_sm_backlog()
-    #fact_sm_cerrado()
+    fact_sm_cerrado()
     print("Finalizó el programa")

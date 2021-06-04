@@ -1,8 +1,6 @@
 from numpy.lib.function_base import append
 import pandas as pd
-import numpy as np
-from config import Conexion
-import pdb
+from config.config import Conexion
 
 conn = Conexion()
 
@@ -24,7 +22,6 @@ def run():
 
     if not df_sql.empty:
         conn.truncate_table('sm_cerrado')
-    # pdb.set_trace()
     df_exel_backlog_cerrado.to_sql(
         'sm_cerrado', con=conn.conecction_db(), if_exists='append', index=False)
 

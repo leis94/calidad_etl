@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from config import Conexion
+from config.config import Conexion
 import pdb
 
 conn = Conexion()

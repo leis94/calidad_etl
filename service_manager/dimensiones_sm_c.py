@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from pandas.io.sql import table_exists
-from config import Conexion
+from config.config import Conexion
 
 
 class DimensionesSMC():
