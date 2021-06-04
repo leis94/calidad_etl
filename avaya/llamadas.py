@@ -1,17 +1,20 @@
 import pandas as pd
 from config.config import Conexion
-from config.utils import xls_2_xlsx, conver_coma_to_punto_and_float
+from config.utils import xls_2_xlsx, conver_coma_to_punto_and_float, mover_archivo, path_leaf, try_catch_decorator
 
 conn = Conexion()
 
 
+@try_catch_decorator
 def av_llamadas():
 
     columns_bd = conn.select_columns_table(table='av_llamadas')
-    # print(len(columns))
 
-    df_llamadas = pd.read_excel(
-        r'C:\Users\Cristian Silva\Documents\Repositorios\etl\data\Llamadas.xlsx')
+    path = r'C:\Users\Cristian Silva\Documents\Repositorios\etl\planos\entradas\Llamadas.xlsx'
+    df_llamadas = pd.read_excel(path
+                                )
+    file_name = path_leaf(path)
+    mover_archivo(file_name)
 
     df_llamadas = df_llamadas.convert_dtypes()
     df_llamadas = df_llamadas.drop(0)

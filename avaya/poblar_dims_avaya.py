@@ -40,7 +40,7 @@ def dims_avaya_llamadas():
 
 
 def dims_avaya_abandonos():
-        
+
     df_abandonos = pd.read_sql(conn.select_table_query(
         column='*', table="av_abandonos"), conn.conecction_db())
 
@@ -56,7 +56,7 @@ def dims_avaya_abandonos():
         (df_abandonos.loc[:, ["INTERVALO"]]))
     df_dim_intervalo = df_dim_intervalo.drop_duplicates().reset_index(drop=True)
 
-    dict_dfs = {"dim_skill": ['NUMERO_SKILL',df_dim_skill],
+    dict_dfs = {"dim_skill": ['NUMERO_SKILL', df_dim_skill],
                 "dim_intervalo": ['INICIO_INTERVALO', df_dim_intervalo]
                 }
 
@@ -91,6 +91,7 @@ def comparar_dimensiones_vs_valores_nuevos(dfs):
 
     return dict_dfs
 
+
 def comparar_dimensiones_abandonos_vs_valores_nuevos(dfs):
     dict_dfs = {}
 
@@ -100,9 +101,9 @@ def comparar_dimensiones_abandonos_vs_valores_nuevos(dfs):
 
         # Renombro el nombre de la colmuna dado que en abandonos se llama difrente pero en la dimension y en llamadas es como viene en el dict
         df.columns = [f'{columna_and_df[0]}']
-        
+
         df_dim_bd = pd.read_sql(conn.select_table_query(
-        column=f'{columna_and_df[0]}', table=f"{table}"), conn.conecction_db())
+            column=f'{columna_and_df[0]}', table=f"{table}"), conn.conecction_db())
 
         df_dim_bd = trim_all_columns(df_dim_bd)
 
@@ -110,7 +111,6 @@ def comparar_dimensiones_abandonos_vs_valores_nuevos(dfs):
             df_dim_bd, indicator=True, how='left').loc[lambda x: x['_merge'] != 'both']
 
         df_merge_left = df_merge_left.drop(['_merge'], axis=1)
-
 
         if not df_merge_left.empty:
 

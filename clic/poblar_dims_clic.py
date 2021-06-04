@@ -63,10 +63,10 @@ def dimensiones_clic_resueltos():
     df_sql = df_sql.convert_dtypes()
 
     # Busco los valores unicos (no repeitodos) de las columnas que serán dimensiones, como esto devuelve un np.array lo convierto en un dataframe de nuevo
-    
+
     df_dim_asignatario = pd.DataFrame(
         (df_sql.loc[:, "ASIGNATARIO"].unique()), columns=["ASIGNATARIO"])
-    
+
     df_dim_estado = pd.DataFrame(
         (df_sql.loc[:, "ESTADO"].unique()), columns=["ESTADO"])
 
@@ -81,7 +81,7 @@ def dimensiones_clic_resueltos():
 
     df_dim_impacto = pd.DataFrame(
         (df_sql.loc[:, ["IMPACTO", "URGENCIA"]].drop_duplicates()), columns=["IMPACTO", "URGENCIA"])
-    
+
     df_dim_impacto.fillna('ND', inplace=True)
 
     df_dim_resolucion = pd.DataFrame(
@@ -98,7 +98,6 @@ def dimensiones_clic_resueltos():
     df_dim_cumplimiento = pd.DataFrame(
         (df_sql.loc[:, "CUMPLIMIENTO"].drop_duplicates()), columns=["CUMPLIMIENTO"])
 
-
     df_dim_asignatario.dropna(axis=0, inplace=True)
     df_dim_estado.dropna(axis=0, inplace=True)
     df_dim_prioridad.dropna(axis=0, inplace=True)
@@ -110,26 +109,24 @@ def dimensiones_clic_resueltos():
     df_dim_dependencia.dropna(axis=0, inplace=True)
     df_dim_cumplimiento.dropna(axis=0, inplace=True)
 
-    
-
     dict_dfs_one_column = {"dim_asignatario": ['ASIGNATARIO', df_dim_asignatario],
-                        "dim_estado": ['ESTADO', df_dim_estado],
-                        "dim_prioridad": ['PRIORIDAD', df_dim_prioridad],
-                        "dim_grupo": ['GRUPO', df_dim_grupo],
-                        "dim_tipo": ['TIPO', df_dim_tipo],
-                        "dim_cumplimiento": ['CUMPLIMIENTO', df_dim_cumplimiento]
-                }
+                           "dim_estado": ['ESTADO', df_dim_estado],
+                           "dim_prioridad": ['PRIORIDAD', df_dim_prioridad],
+                           "dim_grupo": ['GRUPO', df_dim_grupo],
+                           "dim_tipo": ['TIPO', df_dim_tipo],
+                           "dim_cumplimiento": ['CUMPLIMIENTO', df_dim_cumplimiento]
+                           }
 
     dict_dfs_several_columns = {"dim_departamento": ["DEPARTAMENTO", "SERVICIO_AFECTADO", df_dim_departamento],
-                            "dim_impacto": ["IMPACTO", "URGENCIA", df_dim_impacto],
-                            "dim_resolucion": ["CODIGO_DE_RESOLUCION", "METODO_DE_RESOLUCION", df_dim_resolucion],
-                            "dim_dependencia": ["DEPENDENCIA", "REGIONAL", df_dim_dependencia]
-    }
-    
+                                "dim_impacto": ["IMPACTO", "URGENCIA", df_dim_impacto],
+                                "dim_resolucion": ["CODIGO_DE_RESOLUCION", "METODO_DE_RESOLUCION", df_dim_resolucion],
+                                "dim_dependencia": ["DEPENDENCIA", "REGIONAL", df_dim_dependencia]
+                                }
 
     # Llamo la función de comparar dimensiones vs valores nuevos provenientes en el excel.
     dataframes = comparar_dimensiones_vs_valores_nuevos(dict_dfs_one_column)
-    dataframes_two = comparar_dimensiones_dos_vs_valores_nuevos(dict_dfs_several_columns)
+    dataframes_two = comparar_dimensiones_dos_vs_valores_nuevos(
+        dict_dfs_several_columns)
 
     for table, df in dataframes.items():
 
@@ -157,24 +154,21 @@ def comparar_dimensiones_vs_valores_nuevos(dfs):
 
         # Llamar a la función para hacer str a los parametros strings del dataframe
         df = trim_all_columns(df)
-        
+
         dim_sql = f"SELECT {atributos_and_df[0]} FROM calidad_etl.{table} WHERE id_{table} <> 1;"
-        
 
         df_dim_bd = pd.read_sql(dim_sql, conn.conecction_db())
-
 
         # Convierto los tipo objectos del df en strings y por ultimo ordeno por la columna para compararlos.
         df_dim_bd = df_dim_bd.convert_dtypes().sort_values(
             by=f'{atributos_and_df[0]}')
-        
+
         # Llamar a la función para hacer str a los parametros strings del dataframe
         df_dim_bd = trim_all_columns(df_dim_bd)
 
         # Logica para comparar dos dataframes y encontrar las diferencias que se encuentran solo en el de la izquierda (al stagin area)
         df_merge_left = df.merge(
             df_dim_bd, indicator=True, how='left').loc[lambda x: x['_merge'] != 'both']
-
 
         df_merge_left = df_merge_left.iloc[0:, [0]]
 
@@ -197,13 +191,13 @@ def comparar_dimensiones_dos_vs_valores_nuevos(dfs):
 
         df = atributos_and_df[2].applymap(
             str).convert_dtypes().sort_values(by=atributos_and_df[0])
-        
+
         # Llamar a la función para hacer str a los parametros strings del dataframe
         df = trim_all_columns(df)
 
         # Pongo este condificional por la casuistica con la tabla dim_dependencia donde filtro desde ND
         if table == 'dim_dependencia':
-           dim_sql = f"SELECT {atributos_and_df[0]}, {atributos_and_df[1]} FROM calidad_etl.{table};"
+            dim_sql = f"SELECT {atributos_and_df[0]}, {atributos_and_df[1]} FROM calidad_etl.{table};"
 
         else:
             dim_sql = f"SELECT {atributos_and_df[0]}, {atributos_and_df[1]} FROM calidad_etl.{table} WHERE id_{table} <> 1;"
@@ -212,7 +206,6 @@ def comparar_dimensiones_dos_vs_valores_nuevos(dfs):
 
         df_dim_bd = pd.read_sql(dim_sql, conn.conecction_db())
 
-        
         # Convierto los tipo objectos del df en strings y por ultimo ordeno por la columna para compararlos.
         df_dim_bd = df_dim_bd.convert_dtypes().sort_values(
             by=f'{atributos_and_df[0]}')
@@ -224,13 +217,13 @@ def comparar_dimensiones_dos_vs_valores_nuevos(dfs):
         df_merge_left = df.merge(
             df_dim_bd, indicator=True, how='left').loc[lambda x: x['_merge'] != 'both']
 
-        df_merge_left = df_merge_left.iloc[0:, [0,1]]
+        df_merge_left = df_merge_left.iloc[0:, [0, 1]]
         df_merge_left.reset_index(drop=True, inplace=True)
 
         if not df_merge_left.empty:
 
             dict_dfs[f'{table}'] = df_merge_left
-    
+
     return dict_dfs
 
 
@@ -238,13 +231,5 @@ def trim_all_columns(df):
     """
     Trim whitespace from ends of each value across all series in dataframe
     """
-    trim_strings = lambda x: x.strip() if isinstance(x, str) else x
+    def trim_strings(x): return x.strip() if isinstance(x, str) else x
     return df.applymap(trim_strings)
-
-
-# if __name__ == '__main__':
-    
-#     dimensiones_clic_abiertos()
-#     dimensiones_clic_resueltos()
-
-#     print("fin del programa")

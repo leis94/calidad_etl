@@ -44,10 +44,9 @@ class DimensionesClic():
         self.dim_dependencia = list_dfs[10]
         self.dim_cumplimiento = list_dfs[11]
 
-
     def trim_all_columns(self, df):
         """
         Trim whitespace from ends of each value across all series in dataframe
         """
-        trim_strings = lambda x: x.strip() if isinstance(x, str) else x
+        def trim_strings(x): return x.strip() if isinstance(x, str) else x
         return df.applymap(trim_strings)

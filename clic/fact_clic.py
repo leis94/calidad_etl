@@ -121,9 +121,3 @@ def trim_all_columns(df):
     """
     def trim_strings(x): return x.strip() if isinstance(x, str) else x
     return df.applymap(trim_strings)
-
-
-# if __name__ == '__main__':
-#     fact_clic_abiertos()
-#     fact_clic_resueltos()
-#     print("Finalizó el programa")
