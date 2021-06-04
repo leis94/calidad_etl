@@ -1,14 +1,21 @@
 from numpy.lib.function_base import append
 import pandas as pd
 from config.config import Conexion
+from config.utils import mover_archivo, path_leaf, try_catch_decorator
+
 
 conn = Conexion()
 
-def run():
-    
-    df_exel_backlog_cerrado = pd.read_excel(
-        r'C:/Users/Elizabeth Cano/OneDrive - ITS InfoCom/Documentos/prueba.xlsx'
-        )
+
+@try_catch_decorator
+def sm_cerrado():
+
+    path = r'C:/Users/Elizabeth Cano/OneDrive - ITS InfoCom/Documentos/prueba.xlsx'
+    df_exel_backlog_cerrado = pd.read_excel(path)
+
+    file_name = path_leaf(path)
+    mover_archivo(file_name)
+
     columns_names_sql = """SHOW columns FROM calidad_process.sm_cerrado;"""
     df_sql = pd.read_sql(columns_names_sql, conn.conecction_db())
     columns_bd = df_sql.iloc[0:, [0]]
@@ -24,7 +31,3 @@ def run():
         conn.truncate_table('sm_cerrado')
     df_exel_backlog_cerrado.to_sql(
         'sm_cerrado', con=conn.conecction_db(), if_exists='append', index=False)
-
-
-if __name__ == '__main__':
-    run()
