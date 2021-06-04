@@ -1,16 +1,22 @@
 import pandas as pd
 from config.config import Conexion
-from config.utils import xls_2_xlsx, conver_coma_to_punto_and_float
+from config.utils import xls_2_xlsx, conver_coma_to_punto_and_float, mover_archivo, path_leaf, try_catch_decorator
 
 conn = Conexion()
 
 
+@try_catch_decorator
 def av_abandonos():
 
     columns_bd = conn.select_columns_table(table='av_abandonos')
 
-    df_abandonos = pd.read_excel(
-        r'C:\Users\Cristian Silva\Documents\Repositorios\etl\data\Abandonos.xlsx')
+    path = r'C:\Users\Cristian Silva\Documents\Repositorios\etl\planos\entradas\Abandonos.xlsx'
+
+    df_abandonos = pd.read_excel(path
+                                 )
+
+    file_name = path_leaf(path)
+    mover_archivo(file_name)
 
     df_abandonos = df_abandonos.convert_dtypes()
 

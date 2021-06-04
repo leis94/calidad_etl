@@ -2,16 +2,17 @@ from numpy.lib.function_base import append
 import pandas as pd
 import numpy as np
 from config.config import Conexion
+from config.utils import try_catch_decorator
 
 conn = Conexion()
 
-
+@try_catch_decorator
 def clic_abiertos():
 
     df_excel_telecomunicaciones = pd.read_excel(
-        r'C:\Users\Cristian Silva\Documents\Repositorios\etl\data\telecomunicaciones.xlsx')
+        r'C:\Users\Cristian Silva\Documents\Repositorios\etl\planos\entradas\telecomunicaciones.xlsx')
     df_excel_telefonia = pd.read_excel(
-        r'C:\Users\Cristian Silva\Documents\Repositorios\etl\data\telefonia.xlsx')
+        r'C:\Users\Cristian Silva\Documents\Repositorios\etl\planos\entradas\telefonia.xlsx')
 
     # Convertir los formatos object en formatos strings
     df_excel_telecomunicaciones = df_excel_telecomunicaciones.convert_dtypes()
