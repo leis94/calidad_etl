@@ -1,20 +1,20 @@
 import pandas as pd
 import numpy as np
-from pandas.io.sql import table_exists
 from config.config import Conexion
+from config.utils import trim_all_columns
 
 
 class DimensionesSMC():
 
     def __init__(self):
 
-        #Cerrado
+        # Cerrado
         self.dim_categoria = {}
         self.dim_cliente = {}
         self.dim_grupo_sm = {}
         self.dim_servicio = {}
         self.dim_usuario_sm = {}
-        #Backlog
+        # Backlog
         self.dim_categoria_backlog = {}
         self.dim_cliente_backlog = {}
         self.dim_grupo_sm_backlog = {}
@@ -29,7 +29,7 @@ class DimensionesSMC():
         for dimension in self.__dict__.keys():
             df_sql = pd.read_sql(conn.select_table_query(
                 '*', dimension), conn.conecction_db())
-            df_sql = self.trim_all_columns(df_sql)
+            df_sql = trim_all_columns(df_sql)
             list_dfs.append(df_sql)
 
         self.dim_categoria = list_dfs[0]
@@ -42,10 +42,3 @@ class DimensionesSMC():
         self.dim_grupo_sm_backlog = list_dfs[7]
         self.dim_servicio_backlog = list_dfs[8]
         self.dim_usuarios_sm_backlog = list_dfs[9]
-    
-    def trim_all_columns(self, df):
-        """
-        Trim whitespace from ends of each value across all series in dataframe
-        """
-        trim_strings = lambda x: x.strip() if isinstance(x, str) else x
-        return df.applymap(trim_strings)
