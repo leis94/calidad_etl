@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from config.config import Conexion
+from config.utils import trim_all_columns
 
 conn = Conexion()
 
@@ -18,7 +19,7 @@ def dimensiones_clic_abiertos():
         (df_sql.loc[:, "CASO_USUARIO"].unique()), columns=["CASO_USUARIO"])
     df_dim_prioridad = pd.DataFrame(
         (df_sql.loc[:, "PRIORIDAD"].unique()), columns=["PRIORIDAD"])
-    df_dim_categoria = pd.DataFrame(
+    df_dim_categoria_clic = pd.DataFrame(
         (df_sql.loc[:, "CATEGORIA"].unique()), columns=["CATEGORIA"])
     df_dim_estado = pd.DataFrame(
         (df_sql.loc[:, "ESTADO"].unique()), columns=["ESTADO"])
@@ -29,14 +30,14 @@ def dimensiones_clic_abiertos():
 
     df_dim_usuario.dropna(axis=0, inplace=True)
     df_dim_prioridad.dropna(axis=0, inplace=True)
-    df_dim_categoria.dropna(axis=0, inplace=True)
+    df_dim_categoria_clic.dropna(axis=0, inplace=True)
     df_dim_estado.dropna(axis=0, inplace=True)
     df_dim_grupo.dropna(axis=0, inplace=True)
     df_dim_asignatario.dropna(axis=0, inplace=True)
 
     dict_dfs = {"dim_usuario": ['CASO_USUARIO', df_dim_usuario],
                 "dim_prioridad": ['PRIORIDAD', df_dim_prioridad],
-                "dim_categoria": ['CATEGORIA', df_dim_categoria],
+                "dim_categoria_clic": ['CATEGORIA', df_dim_categoria_clic],
                 "dim_estado": ['ESTADO', df_dim_estado],
                 "dim_grupo": ['GRUPO', df_dim_grupo],
                 "dim_asignatario": ['ASIGNATARIO', df_dim_asignatario]
@@ -225,11 +226,3 @@ def comparar_dimensiones_dos_vs_valores_nuevos(dfs):
             dict_dfs[f'{table}'] = df_merge_left
 
     return dict_dfs
-
-
-def trim_all_columns(df):
-    """
-    Trim whitespace from ends of each value across all series in dataframe
-    """
-    def trim_strings(x): return x.strip() if isinstance(x, str) else x
-    return df.applymap(trim_strings)

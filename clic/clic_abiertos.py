@@ -2,17 +2,25 @@ from numpy.lib.function_base import append
 import pandas as pd
 import numpy as np
 from config.config import Conexion
-from config.utils import try_catch_decorator
+from config.utils import try_catch_decorator, mover_archivo, path_leaf
 
 conn = Conexion()
+
 
 @try_catch_decorator
 def clic_abiertos():
 
-    df_excel_telecomunicaciones = pd.read_excel(
-        r'C:\Users\Cristian Silva\Documents\Repositorios\etl\planos\entradas\telecomunicaciones.xlsx')
-    df_excel_telefonia = pd.read_excel(
-        r'C:\Users\Cristian Silva\Documents\Repositorios\etl\planos\entradas\telefonia.xlsx')
+    path = r'C:\Users\Cristian Silva\Documents\Repositorios\etl\planos\entradas\telecomunicaciones.xlsx'
+    df_excel_telecomunicaciones = pd.read_excel(path)
+
+    file_name = path_leaf(path)
+    mover_archivo(file_name)
+
+    path = r'C:\Users\Cristian Silva\Documents\Repositorios\etl\planos\entradas\telefonia.xlsx'
+    df_excel_telefonia = pd.read_excel(path)
+
+    file_name = path_leaf(path)
+    mover_archivo(file_name)
 
     # Convertir los formatos object en formatos strings
     df_excel_telecomunicaciones = df_excel_telecomunicaciones.convert_dtypes()
@@ -41,7 +49,3 @@ def clic_abiertos():
 
     df_excel_abiertos.to_sql(
         'clic_abiertos', con=conn.conecction_db(), if_exists='append', index=False)
-
-
-# if __name__ == '__main__':
-#     run()
