@@ -41,17 +41,17 @@ def mover_archivo(file_name):
     today = datetime.datetime.today().strftime('%Y%m%d')
     new_file_name = f"{file_name_without_extension}_{today}.xlsx"
 
-    file_path = f"{os.path.abspath(os.getcwd())}\\planos\\procesados\\{new_file_name}"
+    file_path = f"{os.path.abspath(os.getcwd())}/planos/procesados/{new_file_name}"
 
     if os.path.exists(file_path):
         os.remove(file_path)
 
-    shutil.move(f"{os.path.abspath(os.getcwd())}\\planos\\entradas\\{file_name}",
-                f"{os.path.abspath(os.getcwd())}\\planos\\procesados\\")
+    shutil.move(f"{os.path.abspath(os.getcwd())}/planos/entradas/{file_name}",
+                f"{os.path.abspath(os.getcwd())}/planos/procesados/")
     old_file = os.path.join(
-        f"{os.path.abspath(os.getcwd())}\\planos\\procesados\\", file_name)
+        f"{os.path.abspath(os.getcwd())}/planos/procesados/", file_name)
     new_file = os.path.join(
-        f"{os.path.abspath(os.getcwd())}\\planos\\procesados\\", new_file_name)
+        f"{os.path.abspath(os.getcwd())}/planos/procesados/", new_file_name)
     os.rename(old_file, new_file)
 
 
