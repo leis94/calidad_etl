@@ -1,5 +1,5 @@
+import os
 import pandas as pd
-import numpy as np
 from config.config import Conexion
 from config.utils import try_catch_decorator, mover_archivo, path_leaf
 
@@ -9,7 +9,7 @@ conn = Conexion()
 @try_catch_decorator
 def clic_resueltos():
 
-    path = r'C:\Users\Cristian Silva\Documents\Repositorios\etl\planos\entradas\CLIC RESUELTOS 26-04-2021.xlsx'
+    path = f"{os.path.abspath(os.getcwd())}/planos/entradas/resueltos.xlsx"
 
     df_excel = pd.read_excel(path)
 
