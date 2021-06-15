@@ -1,15 +1,16 @@
 import sqlalchemy as sql
 import pandas as pd
+import os
 
 
 class Conexion():
 
     def __init__(self):
-        self.database_type = "mysql"
-        self.user = 'root'
-        self.password = 'admin123#'
-        self.host = 'localhost:3306'
-        self.database = 'calidad_etl'
+        self.database_type = os.getenv('DBTYPE')
+        self.user = os.getenv('DBUSER')
+        self.password = os.getenv('DBPASS')
+        self.host = os.getenv('DBHOST')
+        self.database = os.getenv('DBNAME')
 
     def conecction_db(self):
 

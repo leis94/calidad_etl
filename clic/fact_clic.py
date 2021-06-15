@@ -94,10 +94,9 @@ def fact_clic_resueltos():
     # Elimino las columnas que sobran del DF dejando solo sus IDs y las requeridas en el CUBO de acuerdo al excel
     df_fact_clic_resueltos = df_fact_clic_resueltos.drop(
         ['ESTADO', 'PRIORIDAD', 'ASIGNATARIO', 'GRUPO', 'DEPARTAMENTO', 'SERVICIO_AFECTADO', 'IMPACTO', 'URGENCIA', 'CODIGO_DE_RESOLUCION',
-         'METODO_DE_RESOLUCION', 'TIPO', 'DEPENDENCIA', 'REGIONAL', 'CUMPLIMIENTO', 'USUARIO_FINAL_AFECTADO', 'INCIDENTE_GRAVE', 'CARGO_EMPLEADO', 'CLASIFICACION_DE_CIERRE',
-         'CODIGO_DEPENDENCIA', 'ID_ASIGNADO', 'LISTADO_PARTES', 'PADRE', 'ID_CARGO', 'TIEMPO_ABIERTO', 'INCUMPLIMIENTO_PREVISTO',  'MES_APERTURA', 'DIA_APERTURA', 'MES_SOLUCION', 'CAUSADO_POR_CAMBIO', 'COMENTARIO', 'CODIGO_CIERRE_UNISYS', 'CLASE', 'REABIERTO', 'ESPERA_CLIENTE', 'TIEMPO_ESPERA_CLIENTE_HS', 'OFERTA', 'GRUPO_ESPERA_CLIENTE',
-         'ID_USUARIO_AFECTADO'], axis=1)
+         'METODO_DE_RESOLUCION', 'TIPO', 'DEPENDENCIA', 'REGIONAL', 'CUMPLIMIENTO'], axis=1)
 
+    
     # Creo la columna "INSERTAR_DT" con la fecha de hoy con la que se insertará al cubo
     today = pd.Timestamp("today").strftime("%Y-%m-%d")
     df_fact_clic_resueltos['INSERTAR_DT'] = today

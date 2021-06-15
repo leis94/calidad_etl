@@ -1,6 +1,5 @@
-from numpy.lib.function_base import append
+import os
 import pandas as pd
-import numpy as np
 from config.config import Conexion
 from config.utils import try_catch_decorator, mover_archivo, path_leaf
 
@@ -10,13 +9,13 @@ conn = Conexion()
 @try_catch_decorator
 def clic_abiertos():
 
-    path = r'C:\Users\Cristian Silva\Documents\Repositorios\etl\planos\entradas\telecomunicaciones.xlsx'
+    path = f"{os.path.abspath(os.getcwd())}/planos/entradas/telecomunicaciones.xlsx"
     df_excel_telecomunicaciones = pd.read_excel(path)
 
     file_name = path_leaf(path)
     mover_archivo(file_name)
 
-    path = r'C:\Users\Cristian Silva\Documents\Repositorios\etl\planos\entradas\telefonia.xlsx'
+    path = f"{os.path.abspath(os.getcwd())}/planos/entradas/telefonia.xlsx"
     df_excel_telefonia = pd.read_excel(path)
 
     file_name = path_leaf(path)
