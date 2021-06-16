@@ -1,7 +1,7 @@
+import os
 import pandas as pd
-import numpy as np
 from config.config import Conexion
-from config.utils import try_catch_decorator
+from config.utils import try_catch_decorator, mover_archivo, path_leaf
 
 conn = Conexion()
 
@@ -9,8 +9,12 @@ conn = Conexion()
 @try_catch_decorator
 def clic_resueltos():
 
-    df_excel = pd.read_excel(
-        r'C:\Users\Cristian Silva\Documents\Repositorios\etl\planos\entradas\CLIC RESUELTOS 26-04-2021.xlsx')
+    path = f"{os.path.abspath(os.getcwd())}/planos/entradas/resueltos.xlsx"
+
+    df_excel = pd.read_excel(path)
+
+    file_name = path_leaf(path)
+    mover_archivo(file_name)
 
     # Convertir los formatos object en formatos strings
     df_excel = df_excel.convert_dtypes()
@@ -36,7 +40,3 @@ def clic_resueltos():
 
     df_excel.to_sql('clic_resueltos', con=conn.conecction_db(),
                     if_exists='append', index=False)
-
-
-# if __name__ == '__main__':
-#     run()

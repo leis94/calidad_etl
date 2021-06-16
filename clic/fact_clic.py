@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from config.config import Conexion
 from clic.dimensiones_clic import DimensionesClic
+from config.utils import trim_all_columns
 
 conn = Conexion()
 
@@ -9,6 +10,8 @@ conn = Conexion()
 def fact_clic_abiertos():
     df_sql = pd.read_sql(conn.select_table_query(
         '*', 'clic_abiertos'), conn.conecction_db())
+
+    df_sql = trim_all_columns(df_sql)
 
     dim_clic_abiertos = DimensionesClic()
 
@@ -22,7 +25,7 @@ def fact_clic_abiertos():
 
     # Hago el merge de los dataframes vs las dimensiones por sus campos que comparten.
     df_fact_clic_abiertos = pd.merge(df_clic_abiertos, dim_usuario, on='CASO_USUARIO').merge(dim_clic_abiertos.dim_prioridad, on='PRIORIDAD').merge(
-        dim_clic_abiertos.dim_categoria, on='CATEGORIA').merge(dim_clic_abiertos.dim_estado, on='ESTADO').merge(dim_clic_abiertos.dim_grupo, on='GRUPO').merge(
+        dim_clic_abiertos.dim_categoria_clic, on='CATEGORIA').merge(dim_clic_abiertos.dim_estado, on='ESTADO').merge(dim_clic_abiertos.dim_grupo, on='GRUPO').merge(
             dim_clic_abiertos.dim_asignatario, on='ASIGNATARIO').convert_dtypes()
 
     # Elimino las columnas que sobran del DF dejando solo sus IDs.
@@ -91,10 +94,9 @@ def fact_clic_resueltos():
     # Elimino las columnas que sobran del DF dejando solo sus IDs y las requeridas en el CUBO de acuerdo al excel
     df_fact_clic_resueltos = df_fact_clic_resueltos.drop(
         ['ESTADO', 'PRIORIDAD', 'ASIGNATARIO', 'GRUPO', 'DEPARTAMENTO', 'SERVICIO_AFECTADO', 'IMPACTO', 'URGENCIA', 'CODIGO_DE_RESOLUCION',
-         'METODO_DE_RESOLUCION', 'TIPO', 'DEPENDENCIA', 'REGIONAL', 'CUMPLIMIENTO', 'USUARIO_FINAL_AFECTADO', 'INCIDENTE_GRAVE', 'CARGO_EMPLEADO', 'CLASIFICACION_DE_CIERRE',
-         'CODIGO_DEPENDENCIA', 'ID_ASIGNADO', 'LISTADO_PARTES', 'PADRE', 'ID_CARGO', 'TIEMPO_ABIERTO', 'INCUMPLIMIENTO_PREVISTO',  'MES_APERTURA', 'DIA_APERTURA', 'MES_SOLUCION', 'CAUSADO_POR_CAMBIO', 'COMENTARIO', 'CODIGO_CIERRE_UNISYS', 'CLASE', 'REABIERTO', 'ESPERA_CLIENTE', 'TIEMPO_ESPERA_CLIENTE_HS', 'OFERTA', 'GRUPO_ESPERA_CLIENTE',
-         'ID_USUARIO_AFECTADO'], axis=1)
+         'METODO_DE_RESOLUCION', 'TIPO', 'DEPENDENCIA', 'REGIONAL', 'CUMPLIMIENTO'], axis=1)
 
+    
     # Creo la columna "INSERTAR_DT" con la fecha de hoy con la que se insertará al cubo
     today = pd.Timestamp("today").strftime("%Y-%m-%d")
     df_fact_clic_resueltos['INSERTAR_DT'] = today
@@ -113,11 +115,3 @@ def fact_clic_resueltos():
 
     df_fact_clic_resueltos.to_sql('fact_clic_resueltos', con=conn.conecction_db(),
                                   if_exists='append', index=False)
-
-
-def trim_all_columns(df):
-    """
-    Trim whitespace from ends of each value across all series in dataframe
-    """
-    def trim_strings(x): return x.strip() if isinstance(x, str) else x
-    return df.applymap(trim_strings)

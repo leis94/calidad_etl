@@ -1,15 +1,16 @@
 import sqlalchemy as sql
 import pandas as pd
+import os
 
 
 class Conexion():
 
     def __init__(self):
-        self.database_type = "mysql"
-        self.user = 'root'
-        self.password = 'admi123.'
-        self.host = 'localhost:3306'
-        self.database = 'calidad_process'
+        self.database_type = os.getenv('DBTYPE')
+        self.user = os.getenv('DBUSER')
+        self.password = os.getenv('DBPASS')
+        self.host = os.getenv('DBHOST')
+        self.database = os.getenv('DBNAME')
 
     def conecction_db(self):
 
@@ -53,7 +54,7 @@ class Conexion():
 
     def select_columns_table(self, table):
 
-        table = table.upper()
+        #table = table.upper()
 
         columns_names_sql = f"SHOW columns FROM calidad_etl.{table};"
 

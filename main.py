@@ -11,6 +11,7 @@ from service_manager.sm_cerrado import sm_cerrado
 from service_manager.poblar_dims_sm import dimensiones_sm_backlog, dimensiones_sm_cerrado
 from service_manager.fact_sm import fact_sm_backlog, fact_sm_cerrado
 import time
+import datetime
 
 
 # def clic():
@@ -42,10 +43,10 @@ def services_manager():
 
 if __name__ == '__main__':
     start = time.time()
-    print("Inicio")
-    # clic()
-    # avaya()
+    print(f"Fecha de Inicio: {datetime.datetime.now()}")
+    clic()
+    avaya()
     services_manager()
     end = time.time()
     print(end - start)
-    print("Finalizó")
+    print(f"Fecha Finalización: {datetime.datetime.now()}")

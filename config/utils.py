@@ -1,4 +1,4 @@
-import win32com.client as win32
+#import win32com.client as win32
 from config.config import Conexion
 import shutil
 import os
@@ -6,17 +6,17 @@ import ntpath
 import datetime
 
 
-def xls_2_xlsx():
-    # fname = f'C:\Users\Cristian Silva\Documents\Repositorios\etl\data\{file}'
-    #fname = r"C:/Users/Cristian Silva/Documents/Repositorios/etl/data/{}".format(file)
-    fname = r"C:/Users/Cristian Silva/Documents/Repositorios/etl/data/Llamadas.xls"
-    excel = win32.gencache.EnsureDispatch('Excel.Application')
-    wb = excel.Workbooks.Open(fname)
+# def xls_2_xlsx():
+#     # fname = f'C:\Users\Cristian Silva\Documents\Repositorios\etl\data\{file}'
+#     #fname = r"C:/Users/Cristian Silva/Documents/Repositorios/etl/data/{}".format(file)
+#     fname = r"C:/Users/Cristian Silva/Documents/Repositorios/etl/data/Llamadas.xls"
+#     excel = win32.gencache.EnsureDispatch('Excel.Application')
+#     wb = excel.Workbooks.Open(fname)
 
-    # FileFormat = 51 is for .xlsx extension
-    wb.SaveAs(fname+"x", FileFormat=51)
-    wb.Close()  # FileFormat = 56 is for .xls extension
-    excel.Application.Quit()
+#     # FileFormat = 51 is for .xlsx extension
+#     wb.SaveAs(fname+"x", FileFormat=51)
+#     wb.Close()  # FileFormat = 56 is for .xls extension
+#     excel.Application.Quit()
 
 
 def trim_all_columns(df):
@@ -41,17 +41,17 @@ def mover_archivo(file_name):
     today = datetime.datetime.today().strftime('%Y%m%d')
     new_file_name = f"{file_name_without_extension}_{today}.xlsx"
 
-    file_path = f"{os.path.abspath(os.getcwd())}\\planos\\procesados\\{new_file_name}"
+    file_path = f"{os.path.abspath(os.getcwd())}/planos/procesados/{new_file_name}"
 
     if os.path.exists(file_path):
         os.remove(file_path)
 
-    shutil.move(f"{os.path.abspath(os.getcwd())}\\planos\\entradas\\{file_name}",
-                f"{os.path.abspath(os.getcwd())}\\planos\\procesados\\")
+    shutil.move(f"{os.path.abspath(os.getcwd())}/planos/entradas/{file_name}",
+                f"{os.path.abspath(os.getcwd())}/planos/procesados/")
     old_file = os.path.join(
-        f"{os.path.abspath(os.getcwd())}\\planos\\procesados\\", file_name)
+        f"{os.path.abspath(os.getcwd())}/planos/procesados/", file_name)
     new_file = os.path.join(
-        f"{os.path.abspath(os.getcwd())}\\planos\\procesados\\", new_file_name)
+        f"{os.path.abspath(os.getcwd())}/planos/procesados/", new_file_name)
     os.rename(old_file, new_file)
 
 

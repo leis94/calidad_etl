@@ -33,6 +33,8 @@ def fact_av_llamadas():
     df_fact_av_llamadas['INSERTAR_DT'] = pd.to_datetime(
         df_fact_av_llamadas['INSERTAR_DT'])
 
+    df_fact_av_llamadas['ANTES_20'] = df_fact_av_llamadas['LLAMADAS_ACD_00-05'] + df_fact_av_llamadas['LLAMADAS_ACD_05-10'] + df_fact_av_llamadas['LLAMADAS_ACD_10-15'] + df_fact_av_llamadas['LLAMADAS_ACD_15-20'] + df_fact_av_llamadas['LLAMADAS_ACD_20-30']
+
     columns_bd = conn.select_columns_table('fact_av_llamadas')
     columns_bd.pop(0)
 
