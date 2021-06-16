@@ -1,6 +1,7 @@
 from numpy.lib.function_base import append
 import pandas as pd
 import numpy as np
+import os
 from config.config import Conexion
 from config.utils import mover_archivo, path_leaf, try_catch_decorator
 
@@ -11,12 +12,11 @@ conn = Conexion()
 @try_catch_decorator
 def sm_backlog():
 
-    path = r'C:/Users/Elizabeth Cano/OneDrive - ITS InfoCom/Documentos/prueba_backlog.xlsx'
-    import pdb; pdb.set_trace()
+    path = path = f"{os.path.abspath(os.getcwd())}/planos/entradas/prueba_backlog.xlsx"
     df_exel_backlog = pd.read_excel(path)
 
-    # file_name = path_leaf(path)
-    # mover_archivo(file_name)
+    file_name = path_leaf(path)
+    mover_archivo(file_name)
 
     columns_names_sql = """SHOW columns FROM calidad_process.sm_backlog;"""
     df_sql = pd.read_sql(columns_names_sql, conn.conecction_db())
