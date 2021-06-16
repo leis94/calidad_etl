@@ -10,7 +10,7 @@ conn = Conexion()
 # Columnas con calculos de calidad para backlog
 def prioridad():
 
-    dim_sql_categoria = f"SELECT id_dim_categoria_backlog, PRIORITY, PRIORIDAD FROM calidad_process.dim_categoria_backlog WHERE id_dim_categoria_backlog <> 1;"
+    dim_sql_categoria = f"SELECT id_dim_categoria_backlog, PRIORITY, PRIORIDAD FROM calidad_etl.dim_categoria_backlog WHERE id_dim_categoria_backlog <> 1;"
     df_dim_bd = pd.read_sql(dim_sql_categoria, conn.conecction_db())
     df_dim_bd = df_dim_bd.convert_dtypes()
 
@@ -18,7 +18,7 @@ def prioridad():
         lambda x: 'Prioridad '+str(x[0]) if x != 'ND' else 'ND')
     for row in df_dim_bd.iloc:
         conn.conecction_db().execute(
-            f"UPDATE calidad_process.dim_categoria_backlog SET PRIORIDAD = '{row.PRIORIDAD}' WHERE id_dim_categoria_backlog = {row.id_dim_categoria_backlog};")
+            f"UPDATE calidad_etl.dim_categoria_backlog SET PRIORIDAD = '{row.PRIORIDAD}' WHERE id_dim_categoria_backlog = '{row.id_dim_categoria_backlog}';")
 
 
 def cumplimiento(fact, dim):

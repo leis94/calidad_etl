@@ -7,7 +7,7 @@ conn = Conexion()
 
 def dimensiones_sm_cerrado():
 
-    sm_cerrado_sql = "SELECT * FROM calidad_process.sm_cerrado;"
+    sm_cerrado_sql = "SELECT * FROM calidad_etl.sm_cerrado;"
     df_sql = pd.read_sql(sm_cerrado_sql, conn.conecction_db())
     df_sql = df_sql.convert_dtypes()
 
@@ -53,7 +53,7 @@ def dimensiones_sm_cerrado():
 
 def dimensiones_sm_backlog():
 
-    sm_backlog_sql = "SELECT * FROM calidad_process.sm_backlog;"
+    sm_backlog_sql = "SELECT * FROM calidad_etl.sm_backlog;"
     df_sql = pd.read_sql(sm_backlog_sql, conn.conecction_db())
     df_sql = df_sql.convert_dtypes()
     # Busco los valores unicos (no repeitodos) de las columnas que serán dimensiones, como esto devuelve un np.array lo convierto en un dataframe de nuevo
@@ -107,7 +107,7 @@ def comparar_dimensiones_vs_valores_nuevos_smc(dfs):
                 str).convert_dtypes().sort_values(by=atributos_and_df[0])
             # Llamar a la función para hacer str a los parametros strings del dataframe
             df = trim_all_columns(df)
-            dim_sql = f"SELECT {atributos_and_df[0]} FROM calidad_process.{table} WHERE id_{table} <> 1;"
+            dim_sql = f"SELECT {atributos_and_df[0]} FROM calidad_etl.{table} WHERE id_{table} <> 1;"
             df_dim_bd = pd.read_sql(dim_sql, conn.conecction_db())
             # Convierto los tipo objectos del df en strings y por ultimo ordeno por la columna para compararlos.
             df_dim_bd = df_dim_bd.convert_dtypes().sort_values(
@@ -139,7 +139,7 @@ def comparar_dimensiones_vs_valores_nuevos_smc(dfs):
                 str).convert_dtypes().sort_values(by=atributos_and_df[0])
             # Llamar a la función para hacer str a los parametros strings del dataframe
             df__ = trim_all_columns(df__)
-            dim_sql_ = f"SELECT {atributos_and_df[0]},{atributos_and_df[1]} FROM calidad_process.{table} WHERE id_{table} <> 1;"
+            dim_sql_ = f"SELECT {atributos_and_df[0]},{atributos_and_df[1]} FROM calidad_etl.{table} WHERE id_{table} <> 1;"
             df_dim_bd_ = pd.read_sql(dim_sql_, conn.conecction_db())
             # Convierto los tipo objectos del df_ en strings y por ultimo ordeno por la columna para compararlos.
             df_dim_bd_ = df_dim_bd_.convert_dtypes().sort_values(
@@ -169,7 +169,7 @@ def comparar_dimensiones_vs_valores_nuevos_smc(dfs):
                 str).convert_dtypes().sort_values(by=atributos_and_df[0])
             # Llamar a la función para hacer str a los parametros strings del dataframe
             df__ = trim_all_columns(df__)
-            dim_sql__ = f"SELECT {atributos_and_df[0]},{atributos_and_df[1]},{atributos_and_df[2]},{atributos_and_df[3]} FROM calidad_process.{table} WHERE id_{table} <> 1;"
+            dim_sql__ = f"SELECT {atributos_and_df[0]},{atributos_and_df[1]},{atributos_and_df[2]},{atributos_and_df[3]} FROM calidad_etl.{table} WHERE id_{table} <> 1;"
             df_dim_bd__ = pd.read_sql(dim_sql__, conn.conecction_db())
             # Convierto los tipo objectos del df__ en strings y por ultimo ordeno por la columna para compararlos.
             df_dim_bd__ = df_dim_bd__.convert_dtypes().sort_values(
@@ -205,7 +205,7 @@ def comparar_dimensiones_vs_valores_nuevos_smb(dfs):
                 str).convert_dtypes()
             # Llamar a la función para hacer str a los parametros strings del dataframe
             df = trim_all_columns(df)
-            dim_sql = f"SELECT {atributos_and_df[0]} FROM calidad_process.{table} WHERE id_{table} <> 1;"
+            dim_sql = f"SELECT {atributos_and_df[0]} FROM calidad_etl.{table} WHERE id_{table} <> 1;"
             df_dim_bd = pd.read_sql(dim_sql, conn.conecction_db())
             # Convierto los tipo objectos del df en strings y por ultimo ordeno por la columna para compararlos.
             df_dim_bd = df_dim_bd.convert_dtypes()
@@ -231,7 +231,7 @@ def comparar_dimensiones_vs_valores_nuevos_smb(dfs):
                 str).convert_dtypes().sort_values(by=atributos_and_df[0])
             # Llamar a la función para hacer str a los parametros strings del dataframe
             df_ = trim_all_columns(df_)
-            dim_sql_ = f"SELECT {atributos_and_df[0]},{atributos_and_df[1]} FROM calidad_process.{table} WHERE id_{table} <> 1;"
+            dim_sql_ = f"SELECT {atributos_and_df[0]},{atributos_and_df[1]} FROM calidad_etl.{table} WHERE id_{table} <> 1;"
             df_dim_bd_ = pd.read_sql(dim_sql_, conn.conecction_db())
             # Convierto los tipo objectos del df_ en strings y por ultimo ordeno por la columna para compararlos.
             df_dim_bd_ = df_dim_bd_.convert_dtypes()
@@ -256,7 +256,7 @@ def comparar_dimensiones_vs_valores_nuevos_smb(dfs):
                 str).convert_dtypes().sort_values(by=atributos_and_df[0])
             # Llamar a la función para hacer str a los parametros strings del dataframe
             df__ = trim_all_columns(df__)
-            dim_sql_ = f"SELECT {atributos_and_df[0]},{atributos_and_df[1]},{atributos_and_df[2]} FROM calidad_process.{table} WHERE id_{table} <> 1;"
+            dim_sql_ = f"SELECT {atributos_and_df[0]},{atributos_and_df[1]},{atributos_and_df[2]} FROM calidad_etl.{table} WHERE id_{table} <> 1;"
             df_dim_bd_ = pd.read_sql(dim_sql_, conn.conecction_db())
             # Convierto los tipo objectos del df__ en strings y por ultimo ordeno por la columna para compararlos.
             df_dim_bd_ = df_dim_bd_.convert_dtypes()
