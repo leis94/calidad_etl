@@ -18,14 +18,14 @@ def sm_backlog():
     file_name = path_leaf(path)
     mover_archivo(file_name)
 
-    columns_names_sql = """SHOW columns FROM calidad_process.sm_backlog;"""
+    columns_names_sql = """SHOW columns FROM calidad_etl.sm_backlog;"""
     df_sql = pd.read_sql(columns_names_sql, conn.conecction_db())
     columns_bd = df_sql.iloc[0:, [0]]
     columns_bd = columns_bd['Field'].tolist()
     # Cambio las columnas del dataframe que están con espacios por _ las cuales son las de la BD.
     df_exel_backlog.columns = df_exel_backlog.columns[:0].tolist(
     ) + columns_bd
-    sm_backlog_sql = """SELECT * FROM calidad_process.sm_backlog LIMIT 1;"""
+    sm_backlog_sql = """SELECT * FROM calidad_etl.sm_backlog LIMIT 1;"""
     df_sql = pd.read_sql(sm_backlog_sql, conn.conecction_db())
     if not df_sql.empty:
         conn.truncate_table('sm_backlog')
