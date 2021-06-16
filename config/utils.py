@@ -1,4 +1,4 @@
-import win32com.client as win32
+#import win32com.client as win32
 from config.config import Conexion
 import shutil
 import os
@@ -6,17 +6,17 @@ import ntpath
 import datetime
 
 
-def xls_2_xlsx():
-    # fname = f'C:\Users\Cristian Silva\Documents\Repositorios\etl\data\{file}'
-    #fname = r"C:/Users/Cristian Silva/Documents/Repositorios/etl/data/{}".format(file)
-    fname = r"C:/Users/Cristian Silva/Documents/Repositorios/etl/data/Llamadas.xls"
-    excel = win32.gencache.EnsureDispatch('Excel.Application')
-    wb = excel.Workbooks.Open(fname)
+# def xls_2_xlsx():
+#     # fname = f'C:\Users\Cristian Silva\Documents\Repositorios\etl\data\{file}'
+#     #fname = r"C:/Users/Cristian Silva/Documents/Repositorios/etl/data/{}".format(file)
+#     fname = r"C:/Users/Cristian Silva/Documents/Repositorios/etl/data/Llamadas.xls"
+#     excel = win32.gencache.EnsureDispatch('Excel.Application')
+#     wb = excel.Workbooks.Open(fname)
 
-    # FileFormat = 51 is for .xlsx extension
-    wb.SaveAs(fname+"x", FileFormat=51)
-    wb.Close()  # FileFormat = 56 is for .xls extension
-    excel.Application.Quit()
+#     # FileFormat = 51 is for .xlsx extension
+#     wb.SaveAs(fname+"x", FileFormat=51)
+#     wb.Close()  # FileFormat = 56 is for .xls extension
+#     excel.Application.Quit()
 
 
 def trim_all_columns(df):
