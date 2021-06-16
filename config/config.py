@@ -54,7 +54,7 @@ class Conexion():
 
     def select_columns_table(self, table):
 
-        table = table.upper()
+        #table = table.upper()
 
         columns_names_sql = f"SHOW columns FROM calidad_etl.{table};"
 
