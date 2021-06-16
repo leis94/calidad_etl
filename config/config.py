@@ -7,9 +7,9 @@ class Conexion():
     def __init__(self):
         self.database_type = "mysql"
         self.user = 'root'
-        self.password = 'admin123#'
+        self.password = 'admi123.'
         self.host = 'localhost:3306'
-        self.database = 'calidad_etl'
+        self.database = 'calidad_process'
 
     def conecction_db(self):
 

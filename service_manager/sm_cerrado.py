@@ -10,11 +10,11 @@ conn = Conexion()
 @try_catch_decorator
 def sm_cerrado():
 
-    path = r'C:/Users/Elizabeth Cano/OneDrive - ITS InfoCom/Documentos/prueba.xlsx'
+    path = r'C:/Users/Elizabeth Cano/OneDrive - ITS InfoCom/Documentos/prueba_cerrado.xlsx'
     df_exel_backlog_cerrado = pd.read_excel(path)
 
-    file_name = path_leaf(path)
-    mover_archivo(file_name)
+    # file_name = path_leaf(path)
+    # mover_archivo(file_name)
 
     columns_names_sql = """SHOW columns FROM calidad_process.sm_cerrado;"""
     df_sql = pd.read_sql(columns_names_sql, conn.conecction_db())
