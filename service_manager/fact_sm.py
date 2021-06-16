@@ -9,6 +9,7 @@ from .calculo_columna import tecnologia, id_compania, FECHA_INFGESO_ESTADO_CORTA
 
 conn = Conexion()
 
+prioridad()
 
 def fact_sm_backlog():
 
@@ -38,23 +39,7 @@ def fact_sm_backlog():
     # Elimino las columnas que sobran del DF dejando solo sus IDs.
     df_fact_sm_backlog = df_fact_sm_backlog.drop(
         ['CUSTOMER_ID', 'DEPT_ID', 'DEPT', 'CATEGORY', 'PRIORITY', 'PRIORIDAD',
-         'STATUS_', 'ESS_ENTRY', 'TITLE', 'BRIEF_DESCRIPTION', 'CAUSE_CODE',
-         'CLR_TXT_RESPONSABLE', 'LOGICAL_NAME', 'RESOLUTION_CODE', 'OPENED_BY',
-         'OPEN_GROUP', 'ASSIGNEE_NAME', 'ASSIGNED_GROUP', 'RESOLVED_BY',
-         'RESOLVED_GROUP', 'CLOSED_BY', 'CLOSED_GROUP', 'CLR_SERVICE_CODE',
-         'AFFECTED_ITEM', 'CLOSE_TIME', 'MAYOR_INCIDENT',
-         'TIME_HRS', 'RF_FILTRO', 'SLA', 'Cumplimiento', 'Cumplimiento_Gral',
-         'RESOLVED_TIME', 'VENDOR', 'REFERENCE_NO', 'DEPEND',
-         'Filtro_Relacion', 'INITIAL_STATE', 'FINAL_STATE', 'State', 'SOURCE_',
-         'MAJOR_ALARM', 'FCR', 'CALENDAR', 'SLO_ID',
-         'SLO_NAME', 'SUBCATEGORY', 'AREA_', 'ECOSISTEMA', 'SEGMENTO', 'CIUDAD',
-         'TKMAXIMO', 'KPF_ID', 'KPF_CAUSA', 'ELEMENTO', 'DOWNTIME_START',
-         'DOWNTIME_END', 'CONTACT_NAME', 'MASTER_INCIDENT',
-         'DOWNTIME_CONCILIADO', 'NUMERO_CUN', 'PRODUCTO', 'DOCTYPE',
-         'ORGANIZATIONTYPE', 'ORGANIZATIONTYPE_EYN', 'Es_Duplicados',
-         'Form_Rango', 'TECNOLOGIA',
-         'Existe_Interacción_SD', 'SIGLA', 'ServicesManager', 'SYSMODTIME',
-         'TIPOSERVICIO', 'SUBTIPO', 'REQUESTED_DATE'], axis=1)
+         "OPEN_GROUP", "ASSIGNED_GROUP", "ServicesManager", "OPENED_BY"], axis=1)
 
     # Creo la columna "INSERTAR_DT" con la fecha de hoy con la que se insertará al cubo
     today = pd.Timestamp("today").strftime("%Y-%m-%d")
@@ -108,22 +93,9 @@ def fact_sm_cerrado():
         dim_sm_cerrado.dim_usuario_sm, on=["USUARIO_INSERTADO", "USUARIO_ASIGNADO", "USUARIO_SOLUCION", "USUARIO_CERRADO"]).convert_dtypes()
     # Elimino las columnas que sobran del DF dejando solo sus IDs.
     df_fact_sm_cerrado = df_fact_sm_cerrado.drop(
-        ['NIT', 'ID_CLIENTE_ONYX', 'NOMBRE_CLIENTE',
-         'ATENCION', 'PRIORIDAD_ATENCION', 'ESTADO_ATENCION', 'RESUMEN_',
-         'USUARIO_INSERTADO', 'GRUPO_INSERTADO',
-         'USUARIO_ASIGNADO', 'GRUPO_ASIGNADO', 'USUARIO_SOLUCION',
-         'GRUPO_SOLUCION', 'USUARIO_CERRADO', 'GRUPO_CERRADO',
-         'SERVICIO', 'PRODUCTO', 'FAMILIA', 'DT_AJUSTADO', 'MAYOR_INCIDENT',
-         'GRUPO_OBJETIVO', 'SEGMENTO', 'PALABRA_CLAVE',
-         'NIT_SIN_COD_Calc', 'Clasif_Por_Cliente_Calc', 'Meta_Individual_Calc',
-         'Meta_Presidencia_Calc', 'Meta_IFI_Calc', '3G_Calc', 'TMX_Minutos_Calc',
-         'TMX_Calc', 'Cluster_Actual_Calc',
-         'Celula_Comercial_Calc', 'Clasif_Por_IVR_Calc',
-         'DT_CONCILIADO', 'CONTACTO_DESTINO', 'ALIAS_ENLACE',
-         'FECHA_SOLUCION', 'TIEMPO_INCIDENTE', 'RANGO_HORA', 'TICKET_MAXIMO',
-         'DIRECTOR', 'PN', 'G_SEGMENTO', 'G_Clasif_Por_IVR_Calc',
-         'NODO', 'Agrupacion_Especiales', 'Interno_Externo',
-         'Numero_CUN', 'TIPOSERVICIO', 'SUBTIPO'], axis=1)
+        ['NOMBRE_CLIENTE','ATENCION', 'PRIORIDAD_ATENCION',
+         "USUARIO_INSERTADO", "USUARIO_ASIGNADO", "USUARIO_SOLUCION", "USUARIO_CERRADO",
+         'SERVICIO'], axis=1)
 
     # Creo la columna "INSERTAR_DT" con la fecha de hoy con la que se insertará al cubo
     today = pd.Timestamp("today").strftime("%Y-%m-%d")
