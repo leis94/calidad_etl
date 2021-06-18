@@ -9,10 +9,10 @@ from .calculo_columna import tecnologia, id_compania, FECHA_INFGESO_ESTADO_CORTA
 
 conn = Conexion()
 
-prioridad()
-
 def fact_sm_backlog():
 
+    prioridad()
+    
     df_sql = pd.read_sql(conn.select_table_query(
         '*', 'sm_backlog'), conn.conecction_db())
 
@@ -62,14 +62,17 @@ def fact_sm_backlog():
     sql_fact = pd.read_sql(conn.select_table_date_query(
         column='*', table='fact_sm_backlog', date=today), conn.conecction_db())
 
-    if not sql_fact.empty:
-        conn.delete_data(table='fact_sm_backlog', date=today)
+    # if not sql_fact.empty:
+    #     conn.delete_data(table='fact_sm_backlog', date=today)
 
-    df_fact_sm_backlog.to_sql(
+    if not df_sql.empty:
+        conn.truncate_table('fact_sm_backlog')
+        df_fact_sm_backlog.to_sql(
         'fact_sm_backlog', con=conn.conecction_db(), if_exists='append', index=False)
 
 
 def fact_sm_cerrado():
+
     df_sql = pd.read_sql(conn.select_table_query(
         '*', 'sm_cerrado'), conn.conecction_db())
 
@@ -96,6 +99,23 @@ def fact_sm_cerrado():
         ['NOMBRE_CLIENTE','ATENCION', 'PRIORIDAD_ATENCION',
          "USUARIO_INSERTADO", "USUARIO_ASIGNADO", "USUARIO_SOLUCION", "USUARIO_CERRADO",
          'SERVICIO'], axis=1)
+
+
+    df_fact_sm_cerrado_bd = pd.read_sql(conn.select_table_query(
+        column='*', table='fact_sm_cerrado'), conn.conecction_db())
+
+    # Logica para comparar dos dataframes y encontrar las diferencias que se encuentran solo en el de la izquierda (al stagin area)
+    df_merge_left = df_fact_sm_cerrado.merge(
+        df_fact_sm_cerrado_bd, how='outer', indicator=True).loc[lambda x: x['_merge'] == 'left_only']
+
+    df_merge_left = df_merge_left.drop(['_merge'], axis=1)
+
+    df_merge_left.reset_index(drop=True, inplace=True)
+
+    tiquets_list = df_merge_left['LLAVE_GENERAL_Calc'].tolist()
+
+    for tiquete in tiquets_list:
+        conn.delete_llave_unica(table='fact_sm_cerrado', tiquete=tiquete)
 
     # Creo la columna "INSERTAR_DT" con la fecha de hoy con la que se insertará al cubo
     today = pd.Timestamp("today").strftime("%Y-%m-%d")
