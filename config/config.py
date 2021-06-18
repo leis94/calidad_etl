@@ -82,3 +82,11 @@ class Conexion():
         conn.execute(f"DELETE FROM {table} WHERE TIQUETE = '{tiquete}'")
 
         return (f"El Tiquete {tiquete} fue borrado de la tabla {table}")
+
+    def delete_llave_unica(self, table, tiquete):
+
+        conn = self.conecction_db()
+
+        conn.execute(f"DELETE FROM {table} WHERE LLAVE_GENERAL_Calc = '{tiquete}'")
+
+        return (f"El Tiquete {tiquete} fue borrado de la tabla {table}")
