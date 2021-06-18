@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from config.config import Conexion
-from config.utils import try_catch_decorator, mover_archivo, path_leaf
+from config.utils import try_catch_decorator, mover_archivo, path_leaf, trim_all_columns
 
 conn = Conexion()
 
@@ -9,23 +9,29 @@ conn = Conexion()
 @try_catch_decorator
 def clic_abiertos():
 
-    path = f"{os.path.abspath(os.getcwd())}/planos/entradas/telecomunicaciones.xlsx"
-    df_excel_telecomunicaciones = pd.read_excel(path)
+    path = f"{os.path.abspath(os.getcwd())}/planos/entradas/incidentes.xlsx"
+    df_excel_incidentes = pd.read_excel(path, usecols="B:P")
 
     file_name = path_leaf(path)
     mover_archivo(file_name)
 
-    path = f"{os.path.abspath(os.getcwd())}/planos/entradas/telefonia.xlsx"
-    df_excel_telefonia = pd.read_excel(path)
+    path = f"{os.path.abspath(os.getcwd())}/planos/entradas/solicitudes.xlsx"
+    df_excel_solicitudes = pd.read_excel(path)
 
     file_name = path_leaf(path)
     mover_archivo(file_name)
 
     # Convertir los formatos object en formatos strings
-    df_excel_telecomunicaciones = df_excel_telecomunicaciones.convert_dtypes()
-    df_excel_telefonia = df_excel_telefonia.convert_dtypes()
+    df_excel_incidentes = df_excel_incidentes.convert_dtypes()
+    df_excel_solicitudes = df_excel_solicitudes.convert_dtypes()
 
-    df_excel_abiertos = df_excel_telefonia.append(df_excel_telecomunicaciones)
+
+
+    df_excel_solicitudes.rename(columns={"Solicitud núm.": "Incidente núm.", "Grupo.1":"Problem", "Objetivo del servicio":"Etiqueta..."}, inplace=True)
+
+    df_excel_abiertos = df_excel_incidentes.append(df_excel_solicitudes)
+
+    df_excel_abiertos = trim_all_columns(df_excel_abiertos)
 
     columns_bd = conn.select_columns_table(table='clic_abiertos')
 

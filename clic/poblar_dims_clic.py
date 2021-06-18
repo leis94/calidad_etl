@@ -9,9 +9,10 @@ conn = Conexion()
 
 def dimensiones_clic_abiertos():
 
-    clic_abiertos_sql = "SELECT * FROM calidad_etl.clic_abiertos;"
+    df_sql = pd.read_sql(conn.select_table_query(
+        column='*', table="clic_abiertos"), conn.conecction_db())
 
-    df_sql = pd.read_sql(clic_abiertos_sql, conn.conecction_db())
+    df_sql = trim_all_columns(df_sql)
 
     df_sql = df_sql.convert_dtypes()
 
@@ -20,8 +21,10 @@ def dimensiones_clic_abiertos():
         (df_sql.loc[:, "CASO_USUARIO"].unique()), columns=["CASO_USUARIO"])
     df_dim_prioridad = pd.DataFrame(
         (df_sql.loc[:, "PRIORIDAD"].unique()), columns=["PRIORIDAD"])
+
     df_dim_categoria_clic = pd.DataFrame(
         (df_sql.loc[:, "CATEGORIA"].unique()), columns=["CATEGORIA"])
+
     df_dim_estado = pd.DataFrame(
         (df_sql.loc[:, "ESTADO"].unique()), columns=["ESTADO"])
     df_dim_grupo = pd.DataFrame(
@@ -190,13 +193,15 @@ def comparar_dimensiones_vs_valores_nuevos(dfs):
         # Llamar a la función para hacer str a los parametros strings del dataframe
         df = trim_all_columns(df)
 
-        dim_sql = f"SELECT {atributos_and_df[0]} FROM calidad_etl.{table} WHERE id_{table} <> 1;"
+        #dim_sql = f"SELECT {atributos_and_df[0]} FROM calidad_etl.{table} WHERE id_{table} <> 1;"
 
-        df_dim_bd = pd.read_sql(dim_sql, conn.conecction_db())
+        df_dim_bd = pd.read_sql(conn.select_table_query(
+            column=f'{atributos_and_df[0]}', table=f"{table}"), conn.conecction_db())
 
         # Convierto los tipo objectos del df en strings y por ultimo ordeno por la columna para compararlos.
-        df_dim_bd = df_dim_bd.convert_dtypes().sort_values(
-            by=f'{atributos_and_df[0]}')
+        df_dim_bd = df_dim_bd.convert_dtypes()
+        # .sort_values(
+        #     by=f'{atributos_and_df[0]}')
 
         # Llamar a la función para hacer str a los parametros strings del dataframe
         df_dim_bd = trim_all_columns(df_dim_bd)

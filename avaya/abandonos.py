@@ -15,7 +15,6 @@ def av_abandonos():
 
     df_abandonos = pd.read_excel(path)
 
-
     file_name = path_leaf(path)
     mover_archivo(file_name)
 

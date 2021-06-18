@@ -6,7 +6,6 @@ from .dimensiones_avaya import DimensionesAvaya
 
 
 conn = Conexion()
-dims_avaya = DimensionesAvaya()
 
 
 def dims_avaya_llamadas():
@@ -70,6 +69,8 @@ def dims_avaya_abandonos():
 
 
 def comparar_dimensiones_vs_valores_nuevos(dfs):
+
+    dims_avaya = DimensionesAvaya()
     dict_dfs = {}
 
     dict_dims = {}

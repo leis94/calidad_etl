@@ -19,7 +19,9 @@ def fact_clic_abiertos():
 
     df_clic_abiertos = df_sql.convert_dtypes().sort_values(by='FECHA_DE_APERTURA')
 
-    df_clic_abiertos = df_clic_abiertos.fillna('ND')
+    # Hago una lista con las columnas que son del tipo string para llenarlas de ND para que crucen en el merge.
+    str_cols = df_clic_abiertos.columns[df_clic_abiertos.dtypes == 'string']
+    df_clic_abiertos[str_cols] = df_clic_abiertos[str_cols].fillna('ND')
 
     # Elimino el valor ND dado que debo convertir int el df para compararlo.
     dim_usuario = dim_clic_abiertos.dim_usuario
@@ -32,34 +34,10 @@ def fact_clic_abiertos():
 
     # Elimino las columnas que sobran del DF dejando solo sus IDs.
     df_fact_clic_abiertos = df_fact_clic_abiertos.drop(
-        ['ES_PADRE', 'CASO_USUARIO', 'PRIORIDAD', 'CATEGORIA', 'ESTADO', 'GRUPO', 'ASIGNATARIO'], axis=1)
-
-    df_fact_clic_abiertos_bd = pd.read_sql(conn.select_table_query(
-        column='*', table='fact_clic_abiertos'), conn.conecction_db())
-
-    df_fact_clic_abiertos_bd = df_fact_clic_abiertos_bd.drop(
-        ['ID_FACT_CLIC_ABIERTOS', 'INSERTAR_DT'], axis=1)
-
-    df_fact_clic_abiertos_bd['FECHA_DE_APERTURA'] = df_fact_clic_abiertos_bd.FECHA_DE_APERTURA.astype(
-        np.datetime64)
-    # Logica para comparar dos dataframes y encontrar las diferencias que se encuentran solo en el de la izquierda (al stagin area)
-    df_merge_left = df_fact_clic_abiertos.merge(
-        df_fact_clic_abiertos_bd, how='outer', indicator=True).loc[lambda x: x['_merge'] == 'left_only']
-
-    # Elimino las columnas _merge y tiquete que se crean producto del merge de las diferencias.
-    df_merge_left = df_merge_left.drop(['_merge', 'TIQUETE'], axis=1)
-
-    df_merge_left.reset_index(drop=True, inplace=True)
-
-    tiquets_list = df_merge_left['INCIDENTE_NUM'].tolist()
-
-    for tiquete in tiquets_list:
-        conn.delete_tiquete(table='fact_clic_abiertos', tiquete=tiquete)
+        ['CASO_USUARIO', 'PRIORIDAD', 'CATEGORIA', 'ESTADO', 'GRUPO', 'ASIGNATARIO'], axis=1)
 
     # Creo la columna "INSERTAR_DT" con la fecha de hoy con la que se insertará al cubo
     today = pd.Timestamp("today").strftime("%Y-%m-%d")
-
-    df_fact_clic_abiertos = df_merge_left
 
     df_fact_clic_abiertos['INSERTAR_DT'] = today
 
@@ -69,6 +47,12 @@ def fact_clic_abiertos():
 
     df_fact_clic_abiertos.rename(
         columns={"INCIDENTE_NUM": 'TIQUETE'}, inplace=True)
+
+    df_sql = pd.read_sql(conn.select_table_limit_query(
+        table='fact_clic_abiertos'), conn.conecction_db())
+
+    if not df_sql.empty:
+        conn.truncate_table('fact_clic_abiertos')
 
     df_fact_clic_abiertos.to_sql('fact_clic_abiertos', con=conn.conecction_db(),
                                  if_exists='append', index=False)

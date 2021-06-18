@@ -5,11 +5,10 @@ from config.utils import trim_all_columns
 from .dimensiones_avaya import DimensionesAvaya
 
 conn = Conexion()
-dims_avaya = DimensionesAvaya()
 
 
 def fact_av_llamadas():
-
+    dims_avaya = DimensionesAvaya()
     df_av_llamadas = pd.read_sql(conn.select_table_query(
         '*', 'av_llamadas'), conn.conecction_db())
 
@@ -33,7 +32,10 @@ def fact_av_llamadas():
     df_fact_av_llamadas['INSERTAR_DT'] = pd.to_datetime(
         df_fact_av_llamadas['INSERTAR_DT'])
 
-    df_fact_av_llamadas['ANTES_20'] = df_fact_av_llamadas['LLAMADAS_ACD_00-05'] + df_fact_av_llamadas['LLAMADAS_ACD_05-10'] + df_fact_av_llamadas['LLAMADAS_ACD_10-15'] + df_fact_av_llamadas['LLAMADAS_ACD_15-20'] + df_fact_av_llamadas['LLAMADAS_ACD_20-30']
+    df_fact_av_llamadas['ANTES_20'] = df_fact_av_llamadas['LLAMADAS_ACD_00-05'] + df_fact_av_llamadas['LLAMADAS_ACD_05-10'] + \
+        df_fact_av_llamadas['LLAMADAS_ACD_10-15'] + \
+        df_fact_av_llamadas['LLAMADAS_ACD_15-20'] + \
+        df_fact_av_llamadas['LLAMADAS_ACD_20-30']
 
     columns_bd = conn.select_columns_table('fact_av_llamadas')
     columns_bd.pop(0)
@@ -55,7 +57,7 @@ def fact_av_llamadas():
 
 
 def fact_av_abandonos():
-
+    dims_avaya = DimensionesAvaya()
     df_av_abandonos = pd.read_sql(conn.select_table_query(
         '*', 'av_abandonos'), conn.conecction_db())
 
