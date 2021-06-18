@@ -2,8 +2,10 @@ import pandas as pd
 import numpy as np
 from config.config import Conexion
 from config.utils import trim_all_columns
+from .dimensiones_clic import DimensionesClic
 
 conn = Conexion()
+dims_clic = DimensionesClic()
 
 
 def dimensiones_clic_abiertos():
@@ -57,57 +59,90 @@ def dimensiones_clic_abiertos():
 
 def dimensiones_clic_resueltos():
 
-    clic_resueltos_sql = "SELECT * FROM calidad_etl.clic_resueltos;"
+    df_resueltos = pd.read_sql(conn.select_table_query(
+        column='*', table="clic_resueltos"), conn.conecction_db())
 
-    df_sql = pd.read_sql(clic_resueltos_sql, conn.conecction_db())
-
-    df_sql = df_sql.convert_dtypes()
+    df_resueltos = trim_all_columns(df_resueltos)
 
     # Busco los valores unicos (no repeitodos) de las columnas que serán dimensiones, como esto devuelve un np.array lo convierto en un dataframe de nuevo
 
     df_dim_asignatario = pd.DataFrame(
-        (df_sql.loc[:, "ASIGNATARIO"].unique()), columns=["ASIGNATARIO"])
+        (df_resueltos.loc[:, "ASIGNATARIO"].unique()), columns=["ASIGNATARIO"])
+
+    df_dim_asignatario = df_dim_asignatario.drop_duplicates(
+    ).reset_index(drop=True).convert_dtypes()
 
     df_dim_estado = pd.DataFrame(
-        (df_sql.loc[:, "ESTADO"].unique()), columns=["ESTADO"])
+        (df_resueltos.loc[:, "ESTADO"].unique()), columns=["ESTADO"])
+
+    df_dim_estado = df_dim_estado.drop_duplicates(
+    ).reset_index(drop=True).convert_dtypes()
 
     df_dim_prioridad = pd.DataFrame(
-        (df_sql.loc[:, "PRIORIDAD"].unique()), columns=["PRIORIDAD"])
+        (df_resueltos.loc[:, "PRIORIDAD"].unique()), columns=["PRIORIDAD"])
+
+    df_dim_prioridad = df_dim_prioridad.drop_duplicates(
+    ).reset_index(drop=True).convert_dtypes()
 
     df_dim_grupo = pd.DataFrame(
-        (df_sql.loc[:, "GRUPO"].unique()), columns=["GRUPO"])
+        (df_resueltos.loc[:, "GRUPO"].unique()), columns=["GRUPO"])
+
+    df_dim_grupo = df_dim_grupo.drop_duplicates(
+    ).reset_index(drop=True).convert_dtypes()
 
     df_dim_departamento = pd.DataFrame(
-        (df_sql.loc[:, ["DEPARTAMENTO", "SERVICIO_AFECTADO"]].drop_duplicates()), columns=["DEPARTAMENTO", "SERVICIO_AFECTADO"])
+        (df_resueltos.loc[:, ["DEPARTAMENTO", "SERVICIO_AFECTADO"]].drop_duplicates()), columns=["DEPARTAMENTO", "SERVICIO_AFECTADO"])
+
+    df_dim_departamento = df_dim_departamento.drop_duplicates(
+    ).reset_index(drop=True).convert_dtypes()
+
+    df_dim_departamento.fillna('ND', inplace=True)
 
     df_dim_impacto = pd.DataFrame(
-        (df_sql.loc[:, ["IMPACTO", "URGENCIA"]].drop_duplicates()), columns=["IMPACTO", "URGENCIA"])
+        (df_resueltos.loc[:, ["IMPACTO", "URGENCIA"]].drop_duplicates()), columns=["IMPACTO", "URGENCIA"])
+
+    df_dim_impacto = df_dim_impacto.drop_duplicates(
+    ).reset_index(drop=True).convert_dtypes()
 
     df_dim_impacto.fillna('ND', inplace=True)
 
     df_dim_resolucion = pd.DataFrame(
-        (df_sql.loc[:, ["CODIGO_DE_RESOLUCION", "METODO_DE_RESOLUCION"]].drop_duplicates()), columns=["CODIGO_DE_RESOLUCION", "METODO_DE_RESOLUCION"])
+        (df_resueltos.loc[:, ["CODIGO_DE_RESOLUCION", "METODO_DE_RESOLUCION"]].drop_duplicates()), columns=["CODIGO_DE_RESOLUCION", "METODO_DE_RESOLUCION"])
+
+    df_dim_resolucion = df_dim_resolucion.drop_duplicates(
+    ).reset_index(drop=True).convert_dtypes()
+
+    df_dim_resolucion.fillna('ND', inplace=True)
 
     df_dim_tipo = pd.DataFrame(
-        (df_sql.loc[:, "TIPO"].drop_duplicates()), columns=["TIPO"])
+        (df_resueltos.loc[:, "TIPO"].drop_duplicates()), columns=["TIPO"])
+
+    df_dim_tipo = df_dim_tipo.drop_duplicates(
+    ).reset_index(drop=True).convert_dtypes()
 
     df_dim_dependencia = pd.DataFrame(
-        (df_sql.loc[:, ["DEPENDENCIA", "REGIONAL"]].drop_duplicates()), columns=["DEPENDENCIA", "REGIONAL"])
+        (df_resueltos.loc[:, ["DEPENDENCIA", "REGIONAL"]].drop_duplicates()), columns=["DEPENDENCIA", "REGIONAL"])
+
+    df_dim_dependencia = df_dim_dependencia.drop_duplicates(
+    ).reset_index(drop=True).convert_dtypes()
 
     df_dim_dependencia.fillna('ND', inplace=True)
 
     df_dim_cumplimiento = pd.DataFrame(
-        (df_sql.loc[:, "CUMPLIMIENTO"].drop_duplicates()), columns=["CUMPLIMIENTO"])
+        (df_resueltos.loc[:, "CUMPLIMIENTO"].drop_duplicates()), columns=["CUMPLIMIENTO"])
+
+    df_dim_cumplimiento = df_dim_cumplimiento.drop_duplicates(
+    ).reset_index(drop=True).convert_dtypes()
 
     df_dim_asignatario.dropna(axis=0, inplace=True)
     df_dim_estado.dropna(axis=0, inplace=True)
     df_dim_prioridad.dropna(axis=0, inplace=True)
     df_dim_grupo.dropna(axis=0, inplace=True)
-    df_dim_departamento.dropna(axis=0, inplace=True)
-    df_dim_impacto.dropna(axis=0, inplace=True)
-    df_dim_resolucion.dropna(axis=0, inplace=True)
+    #df_dim_departamento.dropna(axis=0, inplace=True)
+    #df_dim_impacto.dropna(axis=0, inplace=True)
+    #df_dim_resolucion.dropna(axis=0, inplace=True)
     df_dim_tipo.dropna(axis=0, inplace=True)
-    df_dim_dependencia.dropna(axis=0, inplace=True)
+
     df_dim_cumplimiento.dropna(axis=0, inplace=True)
 
     dict_dfs_one_column = {"dim_asignatario": ['ASIGNATARIO', df_dim_asignatario],
@@ -118,10 +153,10 @@ def dimensiones_clic_resueltos():
                            "dim_cumplimiento": ['CUMPLIMIENTO', df_dim_cumplimiento]
                            }
 
-    dict_dfs_several_columns = {"dim_departamento": ["DEPARTAMENTO", "SERVICIO_AFECTADO", df_dim_departamento],
-                                "dim_impacto": ["IMPACTO", "URGENCIA", df_dim_impacto],
-                                "dim_resolucion": ["CODIGO_DE_RESOLUCION", "METODO_DE_RESOLUCION", df_dim_resolucion],
-                                "dim_dependencia": ["DEPENDENCIA", "REGIONAL", df_dim_dependencia]
+    dict_dfs_several_columns = {"dim_departamento": df_dim_departamento,
+                                "dim_impacto": df_dim_impacto,
+                                "dim_resolucion": df_dim_resolucion,
+                                "dim_dependencia": df_dim_dependencia
                                 }
 
     # Llamo la función de comparar dimensiones vs valores nuevos provenientes en el excel.
@@ -186,40 +221,19 @@ def comparar_dimensiones_dos_vs_valores_nuevos(dfs):
 
     dict_dfs = {}
 
-    for table, atributos_and_df in dfs.items():
+    dict_dims = {}
 
-        # Convierto las columnas en obj de string de pandas, luego convierto los objectos en strings y por ultimo ordeno por la columna para compararlos.
+    for dimension, dataframe in dims_clic.__dict__.items():
+        dimension_mayus = dimension.upper()
+        dict_dims[dimension] = dataframe.drop(
+            [f'ID_{dimension_mayus}'], axis=1)
 
-        df = atributos_and_df[2].applymap(
-            str).convert_dtypes().sort_values(by=atributos_and_df[0])
+    for table, df in dfs.items():
 
-        # Llamar a la función para hacer str a los parametros strings del dataframe
-        df = trim_all_columns(df)
-
-        # Pongo este condificional por la casuistica con la tabla dim_dependencia donde filtro desde ND
-        if table == 'dim_dependencia':
-            dim_sql = f"SELECT {atributos_and_df[0]}, {atributos_and_df[1]} FROM calidad_etl.{table};"
-
-        else:
-            dim_sql = f"SELECT {atributos_and_df[0]}, {atributos_and_df[1]} FROM calidad_etl.{table} WHERE id_{table} <> 1;"
-
-        #dim_sql = f"SELECT {atributos_and_df[0]}, {atributos_and_df[1]} FROM calidad_etl.{table} WHERE id_{table} <> 1;"
-
-        df_dim_bd = pd.read_sql(dim_sql, conn.conecction_db())
-
-        # Convierto los tipo objectos del df en strings y por ultimo ordeno por la columna para compararlos.
-        df_dim_bd = df_dim_bd.convert_dtypes().sort_values(
-            by=f'{atributos_and_df[0]}')
-
-        # Llamar a la función para hacer str a los parametros strings del dataframe
-        df_dim_bd = trim_all_columns(df_dim_bd)
-
-        # Logica para comparar dos dataframes y encontrar las diferencias que se encuentran solo en el de la izquierda (al stagin area)
         df_merge_left = df.merge(
-            df_dim_bd, indicator=True, how='left').loc[lambda x: x['_merge'] != 'both']
+            dict_dims[f'{table}'], indicator=True, how='left').loc[lambda x: x['_merge'] != 'both']
 
-        df_merge_left = df_merge_left.iloc[0:, [0, 1]]
-        df_merge_left.reset_index(drop=True, inplace=True)
+        df_merge_left = df_merge_left.drop(['_merge'], axis=1)
 
         if not df_merge_left.empty:
 

@@ -157,3 +157,4 @@ Thumbs.db
 # Data
 .vscode/
 planos/
+.env-file.bat

@@ -27,21 +27,17 @@ def clic_abiertos():
 
     df_excel_abiertos = df_excel_telefonia.append(df_excel_telecomunicaciones)
 
-    columns_names_sql = """SHOW columns FROM calidad_etl.clic_abiertos;"""
-
-    df_sql = pd.read_sql(columns_names_sql, conn.conecction_db())
-
-    columns_bd = df_sql.iloc[0:, [0]]
-
-    columns_bd = columns_bd['Field'].tolist()
+    columns_bd = conn.select_columns_table(table='clic_abiertos')
 
     # Cambio las columnas del dataframe que están con espacios por _ las cuales son las de la BD.
     df_excel_abiertos.columns = df_excel_abiertos.columns[:0].tolist(
     ) + columns_bd
 
-    clic_abiertos_sql = """SELECT * FROM calidad_etl.clic_abiertos LIMIT 1;"""
+    df_excel_abiertos = df_excel_abiertos.drop_duplicates(
+        subset=['INCIDENTE_NUM'])
 
-    df_sql = pd.read_sql(clic_abiertos_sql, conn.conecction_db())
+    df_sql = pd.read_sql(conn.select_table_limit_query(
+        table='clic_abiertos'), conn.conecction_db())
 
     if not df_sql.empty:
         conn.truncate_table('clic_abiertos')

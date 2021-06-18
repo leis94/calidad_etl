@@ -73,3 +73,12 @@ class Conexion():
         conn.execute(f"DELETE FROM {table} WHERE INSERTAR_DT = '{date}'")
 
         return (f"La fecha {date} fue borrada de la tabla {table}")
+
+
+    def delete_tiquete(self, table, tiquete):
+
+        conn = self.conecction_db()
+
+        conn.execute(f"DELETE FROM {table} WHERE TIQUETE = '{tiquete}'")
+
+        return (f"El Tiquete {tiquete} fue borrado de la tabla {table}")
