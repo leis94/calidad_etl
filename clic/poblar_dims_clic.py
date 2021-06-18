@@ -5,7 +5,6 @@ from config.utils import trim_all_columns
 from .dimensiones_clic import DimensionesClic
 
 conn = Conexion()
-dims_clic = DimensionesClic()
 
 
 def dimensiones_clic_abiertos():
@@ -218,7 +217,7 @@ def comparar_dimensiones_vs_valores_nuevos(dfs):
 
 
 def comparar_dimensiones_dos_vs_valores_nuevos(dfs):
-
+    dims_clic = DimensionesClic()
     dict_dfs = {}
 
     dict_dims = {}

@@ -6,10 +6,10 @@ from clic.dimensiones_clic import DimensionesClic
 from config.utils import trim_all_columns
 
 conn = Conexion()
-dims_clic = DimensionesClic()
 
 
 def fact_clic_abiertos():
+    dims_clic = DimensionesClic()
     df_sql = pd.read_sql(conn.select_table_query(
         '*', 'clic_abiertos'), conn.conecction_db())
 
@@ -40,6 +40,8 @@ def fact_clic_abiertos():
     df_fact_clic_abiertos_bd = df_fact_clic_abiertos_bd.drop(
         ['ID_FACT_CLIC_ABIERTOS', 'INSERTAR_DT'], axis=1)
 
+    df_fact_clic_abiertos_bd['FECHA_DE_APERTURA'] = df_fact_clic_abiertos_bd.FECHA_DE_APERTURA.astype(
+        np.datetime64)
     # Logica para comparar dos dataframes y encontrar las diferencias que se encuentran solo en el de la izquierda (al stagin area)
     df_merge_left = df_fact_clic_abiertos.merge(
         df_fact_clic_abiertos_bd, how='outer', indicator=True).loc[lambda x: x['_merge'] == 'left_only']
@@ -73,6 +75,7 @@ def fact_clic_abiertos():
 
 
 def fact_clic_resueltos():
+    dims_clic = DimensionesClic()
     df_sql = pd.read_sql(conn.select_table_query(
         '*', 'clic_resueltos'), conn.conecction_db())
 
