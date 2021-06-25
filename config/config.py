@@ -40,7 +40,7 @@ class Conexion():
 
         conn = self.conecction_db()
 
-        result = f"SELECT {column} FROM {table} WHERE INSERTAR_DT = '{date}' LIMIT 1;"
+        result = f"SELECT {column} FROM {table} WHERE FECHA = '{date}';"
 
         return result
 
@@ -90,3 +90,22 @@ class Conexion():
         conn.execute(f"DELETE FROM {table} WHERE LLAVE_GENERAL_Calc = '{tiquete}'")
 
         return (f"El Tiquete {tiquete} fue borrado de la tabla {table}")
+
+
+    def delete_avaya(self, table, fecha, id_dim_skill, id_dim_intervalo):
+
+        conn = self.conecction_db()
+
+        conn.execute(f"DELETE FROM {table} WHERE FECHA = '{fecha}' AND ID_DIM_SKILL = {id_dim_skill} AND ID_DIM_INTERVALO = {id_dim_intervalo}")
+
+        return (f"El registro fue borrado de la tabla {table}")
+
+
+    def select_table_query_existent(self, table, fecha, id_dim_skill, id_dim_intervalo):
+
+        sql = f"SELECT * FROM {table} WHERE FECHA = '{fecha}' AND ID_DIM_SKILL = {id_dim_skill} AND ID_DIM_INTERVALO = {id_dim_intervalo}"
+
+        #df = pd.read_sql(sql, self.conecction_db())
+
+        return sql
+

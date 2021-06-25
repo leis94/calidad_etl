@@ -67,7 +67,6 @@ def dimensiones_clic_resueltos():
     df_resueltos = trim_all_columns(df_resueltos)
 
     # Busco los valores unicos (no repeitodos) de las columnas que serán dimensiones, como esto devuelve un np.array lo convierto en un dataframe de nuevo
-
     df_dim_asignatario = pd.DataFrame(
         (df_resueltos.loc[:, "ASIGNATARIO"].unique()), columns=["ASIGNATARIO"])
 
@@ -186,7 +185,6 @@ def comparar_dimensiones_vs_valores_nuevos(dfs):
     for table, atributos_and_df in dfs.items():
 
         # Convierto las columnas en obj de string de pandas, luego convierto los objectos en strings y por ultimo ordeno por la columna para compararlos.
-
         df = atributos_and_df[1].applymap(
             str).convert_dtypes().sort_values(by=atributos_and_df[0])
 
@@ -194,14 +192,11 @@ def comparar_dimensiones_vs_valores_nuevos(dfs):
         df = trim_all_columns(df)
 
         #dim_sql = f"SELECT {atributos_and_df[0]} FROM calidad_etl.{table} WHERE id_{table} <> 1;"
-
         df_dim_bd = pd.read_sql(conn.select_table_query(
             column=f'{atributos_and_df[0]}', table=f"{table}"), conn.conecction_db())
 
         # Convierto los tipo objectos del df en strings y por ultimo ordeno por la columna para compararlos.
         df_dim_bd = df_dim_bd.convert_dtypes()
-        # .sort_values(
-        #     by=f'{atributos_and_df[0]}')
 
         # Llamar a la función para hacer str a los parametros strings del dataframe
         df_dim_bd = trim_all_columns(df_dim_bd)
