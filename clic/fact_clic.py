@@ -100,12 +100,14 @@ def fact_clic_resueltos():
         ['ESTADO', 'PRIORIDAD', 'ASIGNATARIO', 'GRUPO', 'DEPARTAMENTO', 'SERVICIO_AFECTADO', 'IMPACTO', 'URGENCIA', 'CODIGO_DE_RESOLUCION',
          'METODO_DE_RESOLUCION', 'TIPO', 'DEPENDENCIA', 'REGIONAL', 'CUMPLIMIENTO'], axis=1)
 
-    #import pdb; pdb.set_trace()
     df_fact_clic_resueltos_bd = pd.read_sql(conn.select_table_query(
         column='*', table='fact_clic_resueltos'), conn.conecction_db())
 
     df_fact_clic_resueltos_bd = df_fact_clic_resueltos_bd.drop(
         ['ID_FACT_CLIC_RESUELTOS', 'INSERTAR_DT'], axis=1)
+
+    df_fact_clic_resueltos["DIA_APERTURA"] = df_fact_clic_resueltos["DIA_APERTURA"].astype(
+        str).astype(int)
 
     df_fact_clic_resueltos_bd['FECHA_APERTURA'] = df_fact_clic_resueltos_bd.FECHA_APERTURA.astype(
         np.datetime64)

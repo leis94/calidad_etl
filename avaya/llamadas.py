@@ -12,7 +12,7 @@ def av_llamadas():
     columns_bd = conn.select_columns_table(table='av_llamadas')
 
     path = f"{os.path.abspath(os.getcwd())}/planos/entradas/Llamadas.xlsx"
-    df_llamadas = pd.read_excel(path)
+    df_llamadas = pd.read_excel(path, skiprows=lambda x: x in [0, 1])
 
     file_name = path_leaf(path)
     mover_archivo(file_name)

@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import numpy as np
 from config.config import Conexion
 from config.utils import try_catch_decorator, mover_archivo, path_leaf, trim_all_columns
 
@@ -25,9 +26,11 @@ def clic_abiertos():
     df_excel_incidentes = df_excel_incidentes.convert_dtypes()
     df_excel_solicitudes = df_excel_solicitudes.convert_dtypes()
 
+    df_excel_solicitudes["Grupo.1"].replace(
+        {"CLARO_TELECOMUNICACIONES": np.NaN}, inplace=True)
 
-
-    df_excel_solicitudes.rename(columns={"Solicitud núm.": "Incidente núm.", "Grupo.1":"Problem", "Objetivo del servicio":"Etiqueta..."}, inplace=True)
+    df_excel_solicitudes.rename(columns={"Solicitud núm.": "Incidente núm.",
+                                "Grupo.1": "Problem", "Objetivo del servicio": "Etiqueta..."}, inplace=True)
 
     df_excel_abiertos = df_excel_incidentes.append(df_excel_solicitudes)
 

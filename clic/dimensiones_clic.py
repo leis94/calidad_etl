@@ -44,4 +44,3 @@ class DimensionesClic():
         self.dim_tipo = list_dfs[9]
         self.dim_dependencia = list_dfs[10]
         self.dim_cumplimiento = list_dfs[11]
-
