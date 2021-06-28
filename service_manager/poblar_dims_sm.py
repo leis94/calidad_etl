@@ -13,7 +13,7 @@ def dimensiones_sm_cerrado():
 
     # Busco los valores unicos (no repeitodos) de las columnas que serán dimensiones, como esto devuelve un np.array lo convierto en un dataframe de nuevo
     dim_categoria = pd.DataFrame(
-        (df_sql.loc[:, ["ATENCION", "PRIORIDAD_ATENCION"]].drop_duplicates()), columns=["ATENCION", "PRIORIDAD_ATENCION"])
+        (df_sql.loc[:, ["Nueva_Prioridad_Calc", "PRIORIDAD_ATENCION"]].drop_duplicates()), columns=["Nueva_Prioridad_Calc", "PRIORIDAD_ATENCION"])
     dim_cliente = pd.DataFrame(
         (df_sql.loc[:, "NOMBRE_CLIENTE"].unique()), columns=["NOMBRE_CLIENTE"])
     dim_grupo_sm = pd.DataFrame(
@@ -22,7 +22,10 @@ def dimensiones_sm_cerrado():
         (df_sql.loc[:, "SERVICIO"].unique()), columns=["SERVICIO"])
     dim_usuario_sm = pd.DataFrame(
         (df_sql.loc[:, ["USUARIO_INSERTADO", "USUARIO_ASIGNADO", "USUARIO_SOLUCION", "USUARIO_CERRADO"]].drop_duplicates()), columns=["USUARIO_INSERTADO", "USUARIO_ASIGNADO", "USUARIO_SOLUCION", "USUARIO_CERRADO"])
+    dim_atencion = pd.DataFrame(
+        (df_sql.loc[:, ["ATENCION", "Reclasificacion_atencion_Calc"]].drop_duplicates()), columns=["ATENCION", "Reclasificacion_atencion_Calc"])
 
+    dim_atencion = dim_atencion.fillna('ND')
     dim_categoria = dim_categoria.fillna('ND')
     dim_cliente = dim_cliente.fillna('ND')
     dim_grupo_sm = dim_grupo_sm.fillna('ND')
@@ -33,7 +36,8 @@ def dimensiones_sm_cerrado():
         "dim_cliente": ["NOMBRE_CLIENTE", dim_cliente],
         "dim_grupo_sm": ["GRUPO_ASIGNADO", dim_grupo_sm],
         "dim_usuario_sm": ["USUARIO_INSERTADO", "USUARIO_ASIGNADO", "USUARIO_SOLUCION", "USUARIO_CERRADO", dim_usuario_sm],
-        "dim_categoria": ["ATENCION", "PRIORIDAD_ATENCION", dim_categoria],
+        "dim_categoria": ["Nueva_Prioridad_Calc", "PRIORIDAD_ATENCION", dim_categoria],
+        "dim_atencion": ["ATENCION", "Reclasificacion_atencion_Calc", dim_atencion],
         "dim_servicio": ["SERVICIO", dim_servicio]
     }
 
@@ -101,7 +105,7 @@ def comparar_dimensiones_vs_valores_nuevos_smc(dfs):
     for table, atributos_and_df in dfs.items():
 
         if len(atributos_and_df) == 2:
-            print('una dimension')
+            #print('una dimension')
             # Convierto las columnas en obj de string de pandas, luego convierto los objectos en strings y por ultimo ordeno por la columna para compararlos.
             df = atributos_and_df[1].applymap(
                 str).convert_dtypes().sort_values(by=atributos_and_df[0])
@@ -133,7 +137,7 @@ def comparar_dimensiones_vs_valores_nuevos_smc(dfs):
                 dict_dfs[f'{table}'] = df_merge_left_one
 
         elif len(atributos_and_df) == 3:
-            print('dos dimension')
+            #print('dos dimension')
             # Convierto las columnas en obj de string de pandas, luego convierto los objectos en strings y por ultimo ordeno por la columna para compararlos.
             df__ = atributos_and_df[2].applymap(
                 str).convert_dtypes().sort_values(by=atributos_and_df[0])
@@ -163,7 +167,7 @@ def comparar_dimensiones_vs_valores_nuevos_smc(dfs):
                 dict_dfs[f'{table}'] = df_merge_left_two
 
         elif len(atributos_and_df) == 5:
-            print('cuatro dimension')
+            #print('cuatro dimension')
             # Convierto las columnas en obj de string de pandas, luego convierto los objectos en strings y por ultimo ordeno por la columna para compararlos.
             df__ = atributos_and_df[4].applymap(
                 str).convert_dtypes().sort_values(by=atributos_and_df[0])
@@ -199,7 +203,7 @@ def comparar_dimensiones_vs_valores_nuevos_smb(dfs):
     for table, atributos_and_df in dfs.items():
 
         if len(atributos_and_df) == 2:
-            print('una dimension')
+            #print('una dimension')
             # Convierto las columnas en obj de string de pandas, luego convierto los objectos en strings y por ultimo ordeno por la columna para compararlos.
             df = atributos_and_df[1].applymap(
                 str).convert_dtypes()
@@ -222,7 +226,7 @@ def comparar_dimensiones_vs_valores_nuevos_smb(dfs):
                 dict_dfs[f'{table}'] = df_merge_left_one
 
         elif len(atributos_and_df) == 3:
-            print('dos dimension')
+            #print('dos dimension')
 
             print(table)
 
@@ -249,7 +253,7 @@ def comparar_dimensiones_vs_valores_nuevos_smb(dfs):
                 print(dict_dfs)
 
         elif len(atributos_and_df) == 4:
-            print('tres dimension')
+            #print('tres dimension')
             print(table)
             # Convierto las columnas en obj de string de pandas, luego convierto los objectos en strings y por ultimo ordeno por la columna para compararlos.
             df__ = atributos_and_df[3].applymap(

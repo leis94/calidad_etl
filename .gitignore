@@ -158,3 +158,10 @@ Thumbs.db
 .vscode/
 planos/
 .env-file.bat
+
+#Data MACOS ELI
+bin/
+include/
+lib/
+pyvenv.cfg
+env-file.bat
