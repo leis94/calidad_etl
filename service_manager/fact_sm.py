@@ -89,16 +89,16 @@ def fact_sm_cerrado():
 
     # Hago el merge de los dataframes vs las dimensiones por sus campos que comparten.
     df_fact_sm_cerrado = pd.merge(df_sm_cerrado,
-                                  dim_sm_cerrado.dim_categoria, on=["ATENCION", "PRIORIDAD_ATENCION"]).merge(
-        dim_sm_cerrado.dim_cliente, on="NOMBRE_CLIENTE").merge(
-        dim_sm_cerrado.dim_grupo_sm, on="GRUPO_ASIGNADO").merge(
-        dim_sm_cerrado.dim_servicio, on="SERVICIO").merge(
-        dim_sm_cerrado.dim_usuario_sm, on=["USUARIO_INSERTADO", "USUARIO_ASIGNADO", "USUARIO_SOLUCION", "USUARIO_CERRADO"]).convert_dtypes()
+                                dim_sm_cerrado.dim_categoria, on=["Nueva_Prioridad_Calc", "PRIORIDAD_ATENCION"]).merge(
+                                dim_sm_cerrado.dim_cliente, on="NOMBRE_CLIENTE").merge(
+                                dim_sm_cerrado.dim_grupo_sm, on="GRUPO_ASIGNADO").merge(
+                                dim_sm_cerrado.dim_servicio, on="SERVICIO").merge(
+                                dim_sm_cerrado.dim_usuario_sm, on=["USUARIO_INSERTADO", "USUARIO_ASIGNADO", "USUARIO_SOLUCION", "USUARIO_CERRADO"]).merge(
+                                dim_sm_cerrado.dim_atencion, on=["ATENCION", "Reclasificacion_atencion_Calc"]).convert_dtypes()
     # Elimino las columnas que sobran del DF dejando solo sus IDs.
     df_fact_sm_cerrado = df_fact_sm_cerrado.drop(
-        ['NOMBRE_CLIENTE','ATENCION', 'PRIORIDAD_ATENCION',
-         "USUARIO_INSERTADO", "USUARIO_ASIGNADO", "USUARIO_SOLUCION", "USUARIO_CERRADO",
-         'SERVICIO'], axis=1)
+        ['NOMBRE_CLIENTE','Nueva_Prioridad_Calc', 'PRIORIDAD_ATENCION', "ATENCION", "Reclasificacion_atencion_Calc",
+         "USUARIO_INSERTADO", "USUARIO_ASIGNADO", "USUARIO_SOLUCION", "USUARIO_CERRADO",'SERVICIO',"GRUPO_ASIGNADO"], axis=1)
 
 
     df_fact_sm_cerrado_bd = pd.read_sql(conn.select_table_query(

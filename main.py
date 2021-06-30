@@ -10,6 +10,7 @@ from service_manager.sm_backlog import sm_backlog
 from service_manager.sm_cerrado import sm_cerrado
 from service_manager.poblar_dims_sm import dimensiones_sm_backlog, dimensiones_sm_cerrado
 from service_manager.fact_sm import fact_sm_backlog, fact_sm_cerrado
+from service_manager.excluyente_proactivo import excluyente_proactivo
 import time
 import datetime
 
@@ -39,13 +40,14 @@ def services_manager():
     dimensiones_sm_backlog()
     fact_sm_cerrado()
     fact_sm_backlog()
+    #excluyente_proactivo()
 
 
 if __name__ == '__main__':
     start = time.time()
     print(f"Fecha de Inicio: {datetime.datetime.now()}")
-    clic()
-    avaya()
+    #clic()
+    #avaya()
     services_manager()
     end = time.time()
     print(end - start)
