@@ -9,93 +9,102 @@ def dimensiones_sm_cerrado():
 
     sm_cerrado_sql = "SELECT * FROM calidad_etl.sm_cerrado;"
     df_sql = pd.read_sql(sm_cerrado_sql, conn.conecction_db())
-    df_sql = df_sql.convert_dtypes()
 
-    # Busco los valores unicos (no repeitodos) de las columnas que serán dimensiones, como esto devuelve un np.array lo convierto en un dataframe de nuevo
-    dim_categoria = pd.DataFrame(
-        (df_sql.loc[:, ["Nueva_Prioridad_Calc", "PRIORIDAD_ATENCION"]].drop_duplicates()), columns=["Nueva_Prioridad_Calc", "PRIORIDAD_ATENCION"])
-    dim_cliente = pd.DataFrame(
-        (df_sql.loc[:, "NOMBRE_CLIENTE"].unique()), columns=["NOMBRE_CLIENTE"])
-    dim_grupo_sm = pd.DataFrame(
-        (df_sql.loc[:, "GRUPO_ASIGNADO"].unique()), columns=["GRUPO_ASIGNADO"])
-    dim_servicio = pd.DataFrame(
-        (df_sql.loc[:, "SERVICIO"].unique()), columns=["SERVICIO"])
-    dim_usuario_sm = pd.DataFrame(
-        (df_sql.loc[:, ["USUARIO_INSERTADO", "USUARIO_ASIGNADO", "USUARIO_SOLUCION", "USUARIO_CERRADO"]].drop_duplicates()), columns=["USUARIO_INSERTADO", "USUARIO_ASIGNADO", "USUARIO_SOLUCION", "USUARIO_CERRADO"])
-    dim_atencion = pd.DataFrame(
-        (df_sql.loc[:, ["ATENCION", "Reclasificacion_atencion_Calc"]].drop_duplicates()), columns=["ATENCION", "Reclasificacion_atencion_Calc"])
+    if not df_sql.empty:
 
-    dim_atencion = dim_atencion.fillna('ND')
-    dim_categoria = dim_categoria.fillna('ND')
-    dim_cliente = dim_cliente.fillna('ND')
-    dim_grupo_sm = dim_grupo_sm.fillna('ND')
-    dim_servicio = dim_servicio.fillna('ND')
-    dim_usuario_sm = dim_usuario_sm.fillna('ND')
+        df_sql = df_sql.convert_dtypes()
 
-    dict_dfs = {
-        "dim_cliente": ["NOMBRE_CLIENTE", dim_cliente],
-        "dim_grupo_sm": ["GRUPO_ASIGNADO", dim_grupo_sm],
-        "dim_usuario_sm": ["USUARIO_INSERTADO", "USUARIO_ASIGNADO", "USUARIO_SOLUCION", "USUARIO_CERRADO", dim_usuario_sm],
-        "dim_categoria": ["Nueva_Prioridad_Calc", "PRIORIDAD_ATENCION", dim_categoria],
-        "dim_atencion": ["ATENCION", "Reclasificacion_atencion_Calc", dim_atencion],
-        "dim_servicio": ["SERVICIO", dim_servicio]
-    }
+        # Busco los valores unicos (no repeitodos) de las columnas que serán dimensiones, como esto devuelve un np.array lo convierto en un dataframe de nuevo
+        dim_categoria = pd.DataFrame(
+            (df_sql.loc[:, ["Nueva_Prioridad_Calc", "PRIORIDAD_ATENCION"]].drop_duplicates()), columns=["Nueva_Prioridad_Calc", "PRIORIDAD_ATENCION"])
+        dim_cliente = pd.DataFrame(
+            (df_sql.loc[:, "NOMBRE_CLIENTE"].unique()), columns=["NOMBRE_CLIENTE"])
+        dim_grupo_sm = pd.DataFrame(
+            (df_sql.loc[:, "GRUPO_ASIGNADO"].unique()), columns=["GRUPO_ASIGNADO"])
+        dim_servicio = pd.DataFrame(
+            (df_sql.loc[:, "SERVICIO"].unique()), columns=["SERVICIO"])
+        dim_usuario_sm = pd.DataFrame(
+            (df_sql.loc[:, ["USUARIO_INSERTADO", "USUARIO_ASIGNADO", "USUARIO_SOLUCION", "USUARIO_CERRADO"]].drop_duplicates()), columns=["USUARIO_INSERTADO", "USUARIO_ASIGNADO", "USUARIO_SOLUCION", "USUARIO_CERRADO"])
+        dim_atencion = pd.DataFrame(
+            (df_sql.loc[:, ["ATENCION", "Reclasificacion_atencion_Calc"]].drop_duplicates()), columns=["ATENCION", "Reclasificacion_atencion_Calc"])
 
-    # Llamo la función de comparar dimensiones vs valores nuevos provenientes en el excel.
+        dim_atencion = dim_atencion.fillna('ND')
+        dim_categoria = dim_categoria.fillna('ND')
+        dim_cliente = dim_cliente.fillna('ND')
+        dim_grupo_sm = dim_grupo_sm.fillna('ND')
+        dim_servicio = dim_servicio.fillna('ND')
+        dim_usuario_sm = dim_usuario_sm.fillna('ND')
 
-    dataframes_dim = comparar_dimensiones_vs_valores_nuevos_smc(dict_dfs)
-    # print(dataframes_dim)
-    for table, df in dataframes_dim.items():
+        dict_dfs = {
+            "dim_cliente": ["NOMBRE_CLIENTE", dim_cliente],
+            "dim_grupo_sm": ["GRUPO_ASIGNADO", dim_grupo_sm],
+            "dim_usuario_sm": ["USUARIO_INSERTADO", "USUARIO_ASIGNADO", "USUARIO_SOLUCION", "USUARIO_CERRADO", dim_usuario_sm],
+            "dim_categoria": ["Nueva_Prioridad_Calc", "PRIORIDAD_ATENCION", dim_categoria],
+            "dim_atencion": ["ATENCION", "Reclasificacion_atencion_Calc", dim_atencion],
+            "dim_servicio": ["SERVICIO", dim_servicio]
+        }
 
-        print(table)
-        print(df)
-        # pdb.set_trace()
-        df.to_sql(f'{table}', con=conn.conecction_db(),
-                  if_exists='append', index=False)
-        print(f'Inserto en la tabla: {table}')
+        # Llamo la función de comparar dimensiones vs valores nuevos provenientes en el excel.
+
+        dataframes_dim = comparar_dimensiones_vs_valores_nuevos_smc(dict_dfs)
+
+        for table, df in dataframes_dim.items():
+
+            print(table)
+            print(df)
+            df.to_sql(f'{table}', con=conn.conecction_db(),
+                      if_exists='append', index=False)
+            print(f'Inserto en la tabla: {table}')
+    else:
+        pass
 
 
 def dimensiones_sm_backlog():
 
     sm_backlog_sql = "SELECT * FROM calidad_etl.sm_backlog;"
     df_sql = pd.read_sql(sm_backlog_sql, conn.conecction_db())
-    df_sql = df_sql.convert_dtypes()
-    # Busco los valores unicos (no repeitodos) de las columnas que serán dimensiones, como esto devuelve un np.array lo convierto en un dataframe de nuevo
-    dim_categoria_backlog = pd.DataFrame(
-        (df_sql.loc[:, "PRIORITY"].unique()), columns=["PRIORITY"])
-    dim_cliente_backlog = pd.DataFrame(
-        (df_sql.loc[:, ["CUSTOMER_ID", "DEPT_ID", "DEPT"]].drop_duplicates()), columns=["CUSTOMER_ID", "DEPT_ID", "DEPT"])
-    dim_grupo_sm_backlog = pd.DataFrame(
-        (df_sql.loc[:, ["OPEN_GROUP", "ASSIGNED_GROUP"]].drop_duplicates()), columns=["OPEN_GROUP", "ASSIGNED_GROUP"])
-    dim_servicio_backlog = pd.DataFrame(
-        (df_sql.loc[:, "ServicesManager"].unique()), columns=["ServicesManager"])
-    dim_usuarios_sm_backlog = pd.DataFrame(
-        (df_sql.loc[:, "OPENED_BY"].unique()), columns=["OPENED_BY"])
 
-    dim_categoria_backlog = dim_categoria_backlog.fillna('ND')
-    dim_cliente_backlog = dim_cliente_backlog.fillna('ND')
-    dim_grupo_sm_backlog = dim_grupo_sm_backlog.fillna('ND')
-    dim_servicio_backlog = dim_servicio_backlog.fillna('ND')
-    dim_usuarios_sm_backlog = dim_usuarios_sm_backlog.fillna('ND')
+    if not df_sql.empty:
 
-    dict_dfs = {
-        "dim_cliente_backlog": ["CUSTOMER_ID", "DEPT_ID", "DEPT", dim_cliente_backlog],
-        "dim_grupo_sm_backlog": ["OPEN_GROUP", "ASSIGNED_GROUP", dim_grupo_sm_backlog],
-        "dim_usuarios_sm_backlog": ["OPENED_BY", dim_usuarios_sm_backlog],
-        "dim_categoria_backlog": ["PRIORITY", dim_categoria_backlog],
-        "dim_servicio_backlog": ["ServicesManager", dim_servicio_backlog]
-    }
-    # Llamo la función de comparar dimensiones vs valores nuevos provenientes en el excel.
-    dataframes_dim = comparar_dimensiones_vs_valores_nuevos_smb(dict_dfs)
-    # pdb.set_trace()
-    for table, df in dataframes_dim.items():
+        df_sql = df_sql.convert_dtypes()
+        # Busco los valores unicos (no repeitodos) de las columnas que serán dimensiones, como esto devuelve un np.array lo convierto en un dataframe de nuevo
+        dim_categoria_backlog = pd.DataFrame(
+            (df_sql.loc[:, "PRIORITY"].unique()), columns=["PRIORITY"])
+        dim_cliente_backlog = pd.DataFrame(
+            (df_sql.loc[:, ["CUSTOMER_ID", "DEPT_ID", "DEPT"]].drop_duplicates()), columns=["CUSTOMER_ID", "DEPT_ID", "DEPT"])
+        dim_grupo_sm_backlog = pd.DataFrame(
+            (df_sql.loc[:, ["OPEN_GROUP", "ASSIGNED_GROUP"]].drop_duplicates()), columns=["OPEN_GROUP", "ASSIGNED_GROUP"])
+        dim_servicio_backlog = pd.DataFrame(
+            (df_sql.loc[:, "ServicesManager"].unique()), columns=["ServicesManager"])
+        dim_usuarios_sm_backlog = pd.DataFrame(
+            (df_sql.loc[:, "OPENED_BY"].unique()), columns=["OPENED_BY"])
 
-        print(table)
-        print(df)
+        dim_categoria_backlog = dim_categoria_backlog.fillna('ND')
+        dim_cliente_backlog = dim_cliente_backlog.fillna('ND')
+        dim_grupo_sm_backlog = dim_grupo_sm_backlog.fillna('ND')
+        dim_servicio_backlog = dim_servicio_backlog.fillna('ND')
+        dim_usuarios_sm_backlog = dim_usuarios_sm_backlog.fillna('ND')
+
+        dict_dfs = {
+            "dim_cliente_backlog": ["CUSTOMER_ID", "DEPT_ID", "DEPT", dim_cliente_backlog],
+            "dim_grupo_sm_backlog": ["OPEN_GROUP", "ASSIGNED_GROUP", dim_grupo_sm_backlog],
+            "dim_usuarios_sm_backlog": ["OPENED_BY", dim_usuarios_sm_backlog],
+            "dim_categoria_backlog": ["PRIORITY", dim_categoria_backlog],
+            "dim_servicio_backlog": ["ServicesManager", dim_servicio_backlog]
+        }
+        # Llamo la función de comparar dimensiones vs valores nuevos provenientes en el excel.
+        dataframes_dim = comparar_dimensiones_vs_valores_nuevos_smb(dict_dfs)
         # pdb.set_trace()
-        df.to_sql(f'{table}', con=conn.conecction_db(),
-                  if_exists='append', index=False)
-        print(f'Inserto en la tabla: {table}')
+        for table, df in dataframes_dim.items():
+
+            print(table)
+            print(df)
+            # pdb.set_trace()
+            df.to_sql(f'{table}', con=conn.conecction_db(),
+                      if_exists='append', index=False)
+            print(f'Inserto en la tabla: {table}')
+    else:
+        pass
 
 
 def comparar_dimensiones_vs_valores_nuevos_smc(dfs):

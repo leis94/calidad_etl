@@ -18,10 +18,11 @@ def sm_cerrado():
 
     # Seleciono la lista de los grupos que solamente se requieren cargar en la operación y creo un nuevo df con esos en especificos.
     nombre_cliente = ['BBVA COLOMBIA', 'ALMACENES EXITO S.A.', 'TUYA S.A']
-    grupo_asignado = ['EYN - NOC BBVA','EYN - NOC EXITO']
-    df_excel_filtered = df_exel_cerrado[df_exel_cerrado['NOMBRE_CLIENTE'].isin(nombre_cliente)]
-    df_excel_filtered = df_exel_cerrado[df_exel_cerrado['GRUPO_ASIGNADO'].isin(grupo_asignado)]
-
+    grupo_asignado = ['EYN - NOC BBVA', 'EYN - NOC EXITO']
+    df_excel_filtered = df_exel_cerrado[df_exel_cerrado['NOMBRE_CLIENTE'].isin(
+        nombre_cliente)]
+    df_excel_filtered = df_exel_cerrado[df_exel_cerrado['GRUPO_ASIGNADO'].isin(
+        grupo_asignado)]
 
     columns_bd = conn.select_columns_table(table='sm_cerrado')
 
@@ -37,4 +38,3 @@ def sm_cerrado():
 
     df_excel_filtered.to_sql('sm_cerrado', con=conn.conecction_db(),
                              if_exists='append', index=False)
-

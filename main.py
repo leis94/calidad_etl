@@ -46,8 +46,8 @@ def services_manager():
 if __name__ == '__main__':
     start = time.time()
     print(f"Fecha de Inicio: {datetime.datetime.now()}")
-    #clic()
-    #avaya()
+    clic()
+    avaya()
     services_manager()
     end = time.time()
     print(end - start)

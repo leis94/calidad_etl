@@ -77,6 +77,10 @@ def try_catch_decorator(func):
                 conn.truncate_table(func.__name__)
             elif func.__name__ == 'clic_resueltos':
                 conn.truncate_table(func.__name__)
+            elif func.__name__ == 'sm_backlog':
+                conn.truncate_table(func.__name__)
+            elif func.__name__ == 'sm_cerrado':
+                conn.truncate_table(func.__name__)
 
             print(f"La función {func.__name__} no encontró el archivo")
     return wrapper
