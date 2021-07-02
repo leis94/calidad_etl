@@ -24,13 +24,20 @@ def prioridad():
 def cumplimiento(fact, dim):
     fact
     relacion = pd.merge(fact, dim, on='id_dim_categoria_backlog')
-    num = [7, 10, 15]
-    num_ = [15, 20, 30]
+    # import pdb
+    # pdb.set_trace()
+    num = [10, 15, 20]
+    num_ = [20, 30, 40]
     for i in range(0, len(num)):
-        fact['CUMPLIMIENTO_CAL'] = relacion.applymap(
-            lambda x: 'Cumple' if x == 'Incident' and x == "Prioridad d%" % i and x <= num[i] else 'No Cumple')
-        fact['CUMPLIMIENTO_CAL'] = relacion.applymap(
-            lambda x: 'Cumple' if x == 'Requerimiento' and x == "Prioridad d%" % i and x <= num_[i] else 'No Cumple')
+
+        fact['CUMPLIMIENTO_CAL'] = relacion.apply(
+            lambda x: 'Cumple' if ((x['New_Category'] == 'Incident' and x['PRIORIDAD'] == 'Prioridad '+str(i+1) and x['Form_Dias_BackLog'] <= num[i]) or
+                                   (x['New_Category'] == 'Requerimiento' and x['PRIORIDAD'] == 'Prioridad '+str(i+1) and x['Form_Dias_BackLog'] <= num_[i]) or
+                                   (x['New_Category'] == 'Cambios' and x['PRIORIDAD'] == 'Prioridad '+str(i+1) and x['Form_Dias_BackLog'] <= num_[i])) else 'No Cumple', axis=1)
+        # fact['CUMPLIMIENTO_CAL'] = relacion.apply(
+        #     lambda x: 'Cumple' if (x['New_Category']=='Requerimiento' and x['PRIORIDAD'] == 'Prioridad '+str(i+1) and x['Form_Dias_BackLog'] <= num_[i]) else 'No Cumple', axis=1)
+        # fact['CUMPLIMIENTO_CAL'] = relacion.apply(
+        #     lambda x: 'Cumple' if (x['New_Category']=='Cambios' and x['PRIORIDAD'] == 'Prioridad '+str(i+1) and x['Form_Dias_BackLog'] <= num_[i]) else 'No Cumple', axis=1)
 
     return fact
 
@@ -42,10 +49,11 @@ def SLA_BACK_CALC(fact, dim):
     num = [7, 10, 15]
     num_ = [15, 20, 30]
     for i in range(0, len(num)):
-        fact['SLA_BACK_CALC'] = relacion.applymap(
-            lambda x: num[i] if x == 'Incident' and x == "Prioridad d%" % i else 0)
-        fact['SLA_BACK_CALC'] = relacion.applymap(
-            lambda x: num_[i] if x == 'Requerimiento' and x == "Prioridad d%" % i else 0)
+        fact['SLA_BACK_CALC'] = relacion.apply(
+            lambda x: num[i] if (x['New_Category'] == 'Incident' and x['PRIORIDAD'] == 'Prioridad '+str(i+1) or
+                                 (x['New_Category'] == 'Requerimiento' and x['PRIORIDAD'] == 'Prioridad '+str(i+1))) else 0, axis=1)
+        # fact['SLA_BACK_CALC'] = relacion.apply(
+        #     lambda x: num_[i] if x['New_Category']=='Requerimiento' and x['PRIORIDAD'] == 'Prioridad '+str(i+1) else 0, axis=1)
 
     sla_valor = fact["SLA_BACK_CALC"]
     form_dias = fact["Form_Dias_BackLog"]
@@ -109,7 +117,8 @@ def EXCLUYENTE_PROACTIVO(fact, dim):
     df_dim_usuarios_insertado = df_sql.convert_dtypes()
     df_dim_usuarios_insertado = trim_all_columns(df_dim_usuarios_insertado)
 
-    relacion = pd.merge(dim, df_dim_usuarios_insertado, on="USUARIO_INSERTADO")
+    relacion = pd.merge(dim, df_dim_usuarios_insertado,
+                        how="left", on="USUARIO_INSERTADO")
     relacion = relacion.drop(["USUARIO_INSERTADO", "USUARIO_ASIGNADO",
                              "USUARIO_SOLUCION", "USUARIO_CERRADO", "OPERACIÓN"], axis=1)
 
@@ -118,5 +127,7 @@ def EXCLUYENTE_PROACTIVO(fact, dim):
     else:
         fact['EXCLUYENTE_PROACTIVO'] = 'Excluir'
 
-    fact['EXCLUYENTE_PROACTIVO'].fillna('Excluir')
+    fact['EXCLUYENTE_PROACTIVO'] = fact['EXCLUYENTE_PROACTIVO'].fillna(
+        'Excluir')
+
     return fact

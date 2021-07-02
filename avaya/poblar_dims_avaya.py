@@ -13,29 +13,34 @@ def dims_avaya_llamadas():
     df_llamadas = pd.read_sql(conn.select_table_query(
         column='*', table="av_llamadas"), conn.conecction_db())
 
-    df_llamadas = trim_all_columns(df_llamadas)
+    if not df_llamadas.empty:
 
-    # Elimino los valores repetidos de las columnas que serán dimensiones para guardar.
-    df_dim_skill = pd.DataFrame(
-        (df_llamadas.loc[:, ["NUMERO_SKILL", "NOMBRE_SKILL"]]))
-    df_dim_skill = df_dim_skill.drop_duplicates(
-    ).reset_index(drop=True).convert_dtypes()
+        df_llamadas = trim_all_columns(df_llamadas)
 
-    df_dim_intervalo = pd.DataFrame(
-        (df_llamadas.loc[:, ["INICIO_INTERVALO", "FIN_INTERVALO"]]))
-    df_dim_intervalo = df_dim_intervalo.drop_duplicates().reset_index(drop=True)
+        # Elimino los valores repetidos de las columnas que serán dimensiones para guardar.
+        df_dim_skill = pd.DataFrame(
+            (df_llamadas.loc[:, ["NUMERO_SKILL", "NOMBRE_SKILL"]]))
+        df_dim_skill = df_dim_skill.drop_duplicates(
+        ).reset_index(drop=True).convert_dtypes()
 
-    dict_dfs = {"dim_skill": df_dim_skill,
-                "dim_intervalo": df_dim_intervalo
-                }
+        df_dim_intervalo = pd.DataFrame(
+            (df_llamadas.loc[:, ["INICIO_INTERVALO", "FIN_INTERVALO"]]))
+        df_dim_intervalo = df_dim_intervalo.drop_duplicates().reset_index(drop=True)
 
-    dataframes = comparar_dimensiones_vs_valores_nuevos(dict_dfs)
+        dict_dfs = {"dim_skill": df_dim_skill,
+                    "dim_intervalo": df_dim_intervalo
+                    }
 
-    for table, df in dataframes.items():
+        dataframes = comparar_dimensiones_vs_valores_nuevos(dict_dfs)
 
-        df.to_sql(f'{table}', con=conn.conecction_db(),
-                  if_exists='append', index=False)
-        print(f'Inserto en la tabla: {table}')
+        for table, df in dataframes.items():
+
+            df.to_sql(f'{table}', con=conn.conecction_db(),
+                      if_exists='append', index=False)
+            print(f'Inserto en la tabla: {table}')
+
+    else:
+        pass
 
 
 def dims_avaya_abandonos():
@@ -43,29 +48,33 @@ def dims_avaya_abandonos():
     df_abandonos = pd.read_sql(conn.select_table_query(
         column='*', table="av_abandonos"), conn.conecction_db())
 
-    df_abandonos = trim_all_columns(df_abandonos)
+    if not df_abandonos.empty:
 
-    # Elimino los valores repetidos de las columnas que serán dimensiones para guardar.
-    df_dim_skill = pd.DataFrame(
-        (df_abandonos.loc[:, ["SPLIT_SKILL"]]))
-    df_dim_skill = df_dim_skill.drop_duplicates(
-    ).reset_index(drop=True).convert_dtypes()
+        df_abandonos = trim_all_columns(df_abandonos)
 
-    df_dim_intervalo = pd.DataFrame(
-        (df_abandonos.loc[:, ["INTERVALO"]]))
-    df_dim_intervalo = df_dim_intervalo.drop_duplicates().reset_index(drop=True)
+        # Elimino los valores repetidos de las columnas que serán dimensiones para guardar.
+        df_dim_skill = pd.DataFrame(
+            (df_abandonos.loc[:, ["SPLIT_SKILL"]]))
+        df_dim_skill = df_dim_skill.drop_duplicates(
+        ).reset_index(drop=True).convert_dtypes()
 
-    dict_dfs = {"dim_skill": ['NUMERO_SKILL', df_dim_skill],
-                "dim_intervalo": ['INICIO_INTERVALO', df_dim_intervalo]
-                }
+        df_dim_intervalo = pd.DataFrame(
+            (df_abandonos.loc[:, ["INTERVALO"]]))
+        df_dim_intervalo = df_dim_intervalo.drop_duplicates().reset_index(drop=True)
 
-    dataframes = comparar_dimensiones_abandonos_vs_valores_nuevos(dict_dfs)
+        dict_dfs = {"dim_skill": ['NUMERO_SKILL', df_dim_skill],
+                    "dim_intervalo": ['INICIO_INTERVALO', df_dim_intervalo]
+                    }
 
-    for table, df in dataframes.items():
+        dataframes = comparar_dimensiones_abandonos_vs_valores_nuevos(dict_dfs)
 
-        df.to_sql(f'{table}', con=conn.conecction_db(),
-                  if_exists='append', index=False)
-        print(f'Inserto en la tabla: {table}')
+        for table, df in dataframes.items():
+
+            df.to_sql(f'{table}', con=conn.conecction_db(),
+                      if_exists='append', index=False)
+            print(f'Inserto en la tabla: {table}')
+    else:
+        pass
 
 
 def comparar_dimensiones_vs_valores_nuevos(dfs):

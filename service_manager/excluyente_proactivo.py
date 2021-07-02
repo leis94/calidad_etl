@@ -8,8 +8,7 @@ conn = Conexion()
 
 def excluyente_proactivo():
 
-    path = os.path.abspath(os.getcwd()) + \
-        '/planos/entradas/excluyente_proactivo.xlsx'
+    path = f"{os.path.abspath(os.getcwd())}/planos/entradas/excluyente_proactivo.xlsx"
     df_exel_backlog = pd.read_excel(path)
     columns_names_sql = """SHOW columns FROM calidad_etl.dim_usuarios_insertado;"""
     df_sql = pd.read_sql(columns_names_sql, conn.conecction_db())

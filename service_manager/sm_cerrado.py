@@ -11,23 +11,30 @@ conn = Conexion()
 def sm_cerrado():
 
     path = f"{os.path.abspath(os.getcwd())}/planos/entradas/prueba_cerrado.xlsx"
-    df_exel_backlog_cerrado = pd.read_excel(path)
+    df_exel_cerrado = pd.read_excel(path)
 
     file_name = path_leaf(path)
     mover_archivo(file_name)
 
-    columns_names_sql = """SHOW columns FROM calidad_etl.sm_cerrado;"""
-    df_sql = pd.read_sql(columns_names_sql, conn.conecction_db())
-    columns_bd = df_sql.iloc[0:, [0]]
-    columns_bd = columns_bd['Field'].tolist()
+    # Seleciono la lista de los grupos que solamente se requieren cargar en la operación y creo un nuevo df con esos en especificos.
+    nombre_cliente = ['BBVA COLOMBIA', 'ALMACENES EXITO S.A.', 'TUYA S.A']
+    grupo_asignado = ['EYN - NOC BBVA', 'EYN - NOC EXITO']
+    df_excel_filtered = df_exel_cerrado[df_exel_cerrado['NOMBRE_CLIENTE'].isin(
+        nombre_cliente)]
+    df_excel_filtered = df_exel_cerrado[df_exel_cerrado['GRUPO_ASIGNADO'].isin(
+        grupo_asignado)]
+
+    columns_bd = conn.select_columns_table(table='sm_cerrado')
 
     # Cambio las columnas del dataframe que están con espacios por _ las cuales son las de la BD.
-    df_exel_backlog_cerrado.columns = df_exel_backlog_cerrado.columns[:0].tolist(
+    df_excel_filtered.columns = df_excel_filtered.columns[:0].tolist(
     ) + columns_bd
-    sm_backlog_sql = """SELECT * FROM calidad_etl.sm_cerrado LIMIT 1;"""
-    df_sql = pd.read_sql(sm_backlog_sql, conn.conecction_db())
+
+    df_sql = pd.read_sql(conn.select_table_limit_query(
+        table='sm_cerrado'), conn.conecction_db())
 
     if not df_sql.empty:
         conn.truncate_table('sm_cerrado')
-    df_exel_backlog_cerrado.to_sql(
-        'sm_cerrado', con=conn.conecction_db(), if_exists='append', index=False)
+
+    df_excel_filtered.to_sql('sm_cerrado', con=conn.conecction_db(),
+                             if_exists='append', index=False)
